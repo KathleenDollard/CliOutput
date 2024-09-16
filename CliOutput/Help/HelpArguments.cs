@@ -1,18 +1,17 @@
-﻿using CliOutput.Primitives;
+﻿using OutputEngine.Primitives;
 
 namespace CliOutput.Help;
 
-public class HelpArguments(CliCommand command)
-    : HelpSection("Arguments", command)
+public class HelpArguments : HelpSection
 {
-    public Table GetHelp()
+    public HelpArguments(CliCommand command) : base("Arguments",command)
     {
         var table = GetTable();
         foreach (var arg in Command.Arguments)
         {
             table.AddRow([arg.Name, arg.Description]);
         }
-        return table;
+        Add( table);
     }
 
     private Table GetTable()

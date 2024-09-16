@@ -1,4 +1,4 @@
-﻿namespace CliOutput.Primitives;
+﻿namespace OutputEngine.Primitives;
 
 /// <summary>
 /// Includes information on the appearance, including both font variations like bold and color. 

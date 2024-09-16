@@ -1,5 +1,5 @@
 using FluentAssertions;
-using CliOutput;
+using OutputEngine;
 
 namespace CliOutput.Test;
 

@@ -1,4 +1,4 @@
-﻿namespace CliOutput.Primitives;
+﻿namespace OutputEngine.Primitives;
 
 /// <summary>
 /// Represents a table column.
@@ -7,11 +7,11 @@
 /// Initializes a new instance of the <see cref="TableColumn"/> class.
 /// </remarks>
 /// <param name="header">The <see cref="string"/> instance to use as the table column header.</param>
-public sealed class TableColumn(TextGroup header,
+public sealed class TableColumn(Paragraph header,
                                 TableColumnKind columnKind = TableColumnKind.Default,
                                 TableColumnAlignment alignment = TableColumnAlignment.Left,
                                 byte maxWidth = TableColumn.maxAllowedColumnWidth,
-                                byte minWidth = 0)
+                                byte minWidth = 10)
 {
     internal const int maxAllowedColumnWidth = byte.MaxValue;
 
@@ -19,19 +19,19 @@ public sealed class TableColumn(TextGroup header,
                        TableColumnKind columnKind = TableColumnKind.Default,
                        TableColumnAlignment alignment = TableColumnAlignment.Left,
                        byte maxWidth = maxAllowedColumnWidth,
-                       byte minWidth = 0)
-        : this(new TextGroup { new TextPart(header) }, columnKind, alignment, maxWidth, minWidth)
+                       byte minWidth = 15)
+        : this(new Paragraph { new TextPart(header) }, columnKind, alignment, maxWidth, minWidth)
     { }
 
     /// <summary>
     /// Gets the column header.
     /// </summary>
-    public TextGroup? Header { get; } = header;
+    public Paragraph? Header { get; } = header;
 
     /// <summary>
     /// Gets or sets the column footer.
     /// </summary>
-    public TextGroup? Footer { get; set; }
+    public Paragraph? Footer { get; set; }
 
     public TableColumnKind ColumnKind { get; set; } = columnKind;
     public TableColumnAlignment Alignment { get; set; } = alignment;

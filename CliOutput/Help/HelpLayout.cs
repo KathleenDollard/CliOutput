@@ -1,4 +1,4 @@
-﻿//using System.Collections;
+﻿using OutputEngine;
 
 namespace CliOutput.Help;
 
@@ -7,42 +7,40 @@ namespace CliOutput.Help;
 //// dotnet new blazorwasm -h --details pwa
 //// Or instead of details, build decent URLs automatically from root. Build Website as well
 
-public class Help
+public class HelpLayout : Layout
 {
     public CliCommand Command { get; }
-    public List<HelpSection> Sections { get; private set; } = [];
 
-    private Help(CliCommand command)
+    private HelpLayout(CliCommand command, IEnumerable<HelpSection> sections)
+        : base(sections)
     {
         Command = command;
     }
 
-    public static Help Create(CliCommand command)
-    {
-        return new Help(command)
-        {
-            Sections = [
+    public static HelpLayout Create(CliCommand command)
+        => new HelpLayout(command,
+            [
                 new HelpDescription(command),
                 new HelpUsage(command),
                 new HelpExamples(command),
                 new HelpArguments(command),
                 new HelpOptions(command),
+                new HelpSubcommands(command),
                 new HelpFootnotes(command),
-                ]
-        };
-    }
+            ]);
+
 }
-    //public Help(object source, HelpCommand helpCommand)
-    //{
-    //    Source = source;
-    //    RootHelpCommand = helpCommand;
-    //}
+//public Help(object source, HelpCommand helpCommand)
+//{
+//    Source = source;
+//    RootHelpCommand = helpCommand;
+//}
 
-    //public List<string> ParentCommands { get; } = new();
+//public List<string> ParentCommands { get; } = new();
 
-    //public object Source { get; }
-    //public bool IncludeUsage { get; set; }
-    //public string? Notes { get; set; }
+//public object Source { get; }
+//public bool IncludeUsage { get; set; }
+//public string? Notes { get; set; }
 //}
 
 //public abstract class HelpPart<T> : IEnumerable<T>

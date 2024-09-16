@@ -1,4 +1,4 @@
-﻿namespace CliOutput.Primitives;
+﻿namespace OutputEngine.Primitives;
 
 public enum TableColumnAlignment
 {
