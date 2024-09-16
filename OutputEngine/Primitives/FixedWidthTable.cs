@@ -1,6 +1,8 @@
-﻿using CliOutput.Primitives;
+﻿//using CellLine = OutputEngine.Primitives.Paragraph;
+//using RowLine = System.Collections.Generic.List<OutputEngine.Primitives.Paragraph>;
+using Row = System.Collections.Generic.List<System.Collections.Generic.List<string>>;
 
-namespace CliOutput;
+namespace OutputEngine.Primitives;
 
 public class FixedWidthTable
 {
@@ -13,30 +15,99 @@ public class FixedWidthTable
 
     private WorkingValues workingValues;
 
-    public IEnumerable<string> LayoutTable(object width)
+    public IEnumerable<IEnumerable<string>> LayoutTable(int width, bool includeHeaders = false)
     {
-        throw new NotImplementedException();
+        var columnWidths = GetAdjustedColumnWidths(width, includeHeaders).ToArray();
+        var rows = GetRows(Table, columnWidths, includeHeaders);
+        var tableLines = new List<IEnumerable<string>>();
+        foreach (var row in rows)
+        {
+            var rowLines = new List<string>();
+            foreach (var line in row)
+            {
+                rowLines.Add(string.Join(string.Empty, line));
+            }
+            tableLines.Add(rowLines);
+        }
+
+        return tableLines;
+
+        static IEnumerable<Row> GetRows(Table table, int[] columnWidths, bool includeHeaders)
+        {
+            var returnRows = new List<Row>();
+            if (includeHeaders)
+            {
+                var header = table.GetHeaderRow();
+                var wrappedHeader = header.Select((cell, col)
+                    => cell is null
+                        ? []
+                        : cell.PlainOutput(columnWidths[col]).ToArray());
+                var headerRows = LineupRow(wrappedHeader, columnWidths);
+                returnRows.AddRange(headerRows);
+            }
+
+            foreach (var row in table.TableData)
+            {
+                var wrappedRow = row.Select((cell, col)
+                    => cell is null
+                        ? []
+                        : cell.PlainOutput(columnWidths[col]).ToArray());
+                var dataRow = LineupRow(wrappedRow, columnWidths);
+                returnRows.AddRange(dataRow);
+            }
+
+            return returnRows;
+        }
+
+        static Row LineupRow(IEnumerable<string[]> byColumn, int[] columnWidths)
+        {
+            var maxLineCount = byColumn.Max(x => x.Count());
+            var returnRows = new Row();
+            for (var i = 0; i < maxLineCount; i++)
+            {
+                var line = new List<string>();
+                for (var j = 0; j < byColumn.Count(); j++)
+                {
+                    var cell = byColumn.ElementAt(j);
+                    var cellLineText = i >= cell.Length
+                        ? string.Empty
+                        : cell switch
+                        {
+                            null => string.Empty,
+                            _ => cell[i] ?? string.Empty
+                        };
+                    line.Add(cellLineText.PadRight(columnWidths[j]));
+                }
+                returnRows.Add(line);
+            }
+            return returnRows;
+        }
     }
 
     private struct WorkingColumnWidth
     {
-        internal WorkingColumnWidth(TableColumn column, int position, Table table)
+        internal WorkingColumnWidth(TableColumn column, int position, Table table, bool includeHeaders)
         {
             Column = column;
             // Set initial values
             TentativeWidth = column.MaxWidth;
-            DesiredWidth = MaxColumnWidth(position, table, TentativeWidth);
+            DesiredWidth = MaxColumnWidth(position, table, TentativeWidth, includeHeaders);
             CurrentWidth = DesiredWidth;
         }
 
 
-        internal static int MaxColumnWidth(int position, Table table, int trialWidth)
+        internal static int MaxColumnWidth(int position, Table table, int trialWidth, bool includeHeaders)
         {
-            var temp = Math.Max(table.TableData.Max(row => row[position].PlainWidth(trialWidth)),
-                    table.HeaderRow is null ? 0 : table.HeaderRow[position].PlainWidth(trialWidth));
-            return table.FooterRow is null
-                ? temp
-                : Math.Max(temp, table.FooterRow[position].PlainWidth(trialWidth));
+            var headerWidth = !includeHeaders
+                                ? 0
+                                : HeaderWidth(table.GetHeaderRow()?.ElementAt(position), trialWidth);
+            return Math.Max(table.TableData.Max(row => row[position].PlainWidth(trialWidth)),
+                                headerWidth);
+
+            static int HeaderWidth(Paragraph? header, int trialWidth)
+                => header is null
+                    ? 0
+                    : header.PlainWidth(trialWidth);
         }
 
         internal TableColumn Column { get; }
@@ -55,18 +126,17 @@ public class FixedWidthTable
         internal int ExtraSpace { get; set; }
     }
 
-    public IEnumerable<int> GetAdjustedColumnWidths(int tableWidth)
+    public IEnumerable<int> GetAdjustedColumnWidths(int tableWidth, bool includeHeaders)
     {
-        var workingWidths = Table.Columns.Select((col, i) => new WorkingColumnWidth(col, i, Table)).ToArray();
+        var workingWidths = Table.Columns.Select((col, i) => new WorkingColumnWidth(col, i, Table, includeHeaders)).ToArray();
         var totalDesired = workingWidths.Sum(col => col.DesiredWidth);
 
         return totalDesired < tableWidth
-            ? WidenFlexibleColumns(workingWidths, tableWidth, totalDesired)
+            ? WidenFlexibleColumns(workingWidths, totalDesired, tableWidth)
             : totalDesired > tableWidth
-                ? ShrinkFlexibleColumns(workingWidths, tableWidth, totalDesired)
-                : workingWidths.Select(x => x.CurrentWidth);
+                ? ShrinkFlexibleColumns(workingWidths, totalDesired, tableWidth)
+                : workingWidths.Select(x => x.CurrentWidth).ToArray();
     }
-
 
     private IEnumerable<int> WidenFlexibleColumns(WorkingColumnWidth[] workingWidths, int totalDesired, int tableWidth)
     {
@@ -159,51 +229,76 @@ public class FixedWidthTable
     private IEnumerable<int> ShrinkFlexibleColumns(WorkingColumnWidth[] workingWidths, int totalDesired, int tableWidth)
     {
         // Determine inflexible columns
-        var flexibleColumnCount = workingWidths.Length;
         for (int i = 0; i < workingWidths.Length; i++)
         {
             if (workingWidths[i].DesiredWidth <= Table.Columns[i].MinWidth)
             {
                 workingWidths[i].FinalWidth = Table.Columns[i].MinWidth;
                 workingWidths[i].CurrentWidth = Table.Columns[i].MinWidth;
-                flexibleColumnCount--;
             }
         }
+        var flexibleColumnCount = workingWidths.Count(x => x.FinalWidth == 0);
         if (flexibleColumnCount > 0)
         {
-            // Iterate a few times here, because adding space will encounter new max width restrictions.
-            var columnCount = Table.Columns.Count;
-            for (int j = 0; j < columnCount; j++)
+            // TODO: Iterate a few times here, because adding space will encounter new max width restrictions. Arbitrary number of iterations.
+            for (int j = 0; j < 5; j++)
             {
                 var lastFlexibleColumnCount = flexibleColumnCount;
-                var totalCurrent = workingWidths.Sum(x => x.FinalWidth > 0 ? x.FinalWidth : x.DesiredWidth);
-                var fairAddition = (tableWidth - totalCurrent) / flexibleColumnCount;
-                for (int i = 0; i < workingWidths.Length; i++)
-                {
-                    if (workingWidths[i].FinalWidth == 0)
-                    {
-                        workingWidths[i].CurrentWidth = workingWidths[i].DesiredWidth + fairAddition;
-                        if (workingWidths[i].DesiredWidth <= Table.Columns[i].MinWidth)
-                        {
-                            workingWidths[i].FinalWidth = Table.Columns[i].MinWidth;
-                            workingWidths[i].CurrentWidth = Table.Columns[i].MinWidth;
-                            flexibleColumnCount--;
-                        }
-                    }
-                }
+                CalculateFairAddition(workingWidths, totalDesired, tableWidth, ref flexibleColumnCount);
+
                 if (flexibleColumnCount == 0 || flexibleColumnCount == lastFlexibleColumnCount)
                 {
                     break;
                 }
             }
         }
-        return workingWidths.Select(x => x.CurrentWidth);
+        return workingWidths.Select(x => x.FinalWidth > 0 ? x.FinalWidth : x.FairWidth);
     }
 
 
+    private void CalculateFairAddition(WorkingColumnWidth[] workingWidths, int totalDesired, int tableWidth, ref int flexibleColumnCount)
+    {
+        var trialAdjustment = SetMinMaxAndGetTrialAdjustment(workingWidths, Table, tableWidth, ref flexibleColumnCount);
+        AdjustFlexibleColumns(workingWidths, trialAdjustment);
 
+        static void AdjustFlexibleColumns(WorkingColumnWidth[] workingWidths, int trialAdjustment)
+        {
+            for (int i = 0; i < workingWidths.Length; i++)
+            {
+                if (workingWidths[i].FinalWidth == 0)
+                {
+                    workingWidths[i].FairWidth = workingWidths[i].DesiredWidth - trialAdjustment;
+                    workingWidths[i].DesiredWidth = workingWidths[i].FairWidth;
+                }
+            }
+        }
 
+        static int SetMinMaxAndGetTrialAdjustment(WorkingColumnWidth[] workingWidths, Table table, int tableWidth, ref int flexibleColumnCount)
+        {
+            var trialAdjustment = GetTrialAdjustment(workingWidths, tableWidth, flexibleColumnCount);
+            for (int i = 0; i < workingWidths.Length; i++)
+            {
+                if (workingWidths[i].FinalWidth > 0)
+                {
+                    continue;
+                }
+                workingWidths[i].FairWidth = workingWidths[i].DesiredWidth - trialAdjustment;
+                if (workingWidths[i].FairWidth <= table.Columns[i].MinWidth)
+                {
+                    workingWidths[i].FinalWidth = table.Columns[i].MinWidth;
+                    flexibleColumnCount--;
+                    trialAdjustment = GetTrialAdjustment(workingWidths, tableWidth, flexibleColumnCount);
+                }
+            }
+            return trialAdjustment;
+        }
 
+        static int GetTrialAdjustment(WorkingColumnWidth[] workingWidths, int tableWidth, int flexibleColumnCount)
+            => flexibleColumnCount == 0
+                    ? 0
+                    : (workingWidths.Sum(x => x.FinalWidth > 0 ? x.FinalWidth : x.DesiredWidth) - tableWidth) / flexibleColumnCount;
+
+    }
 
     //var workingValues = new WorkingValues();
 

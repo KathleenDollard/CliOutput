@@ -6,12 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="ErrorReporting\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\OutputEngine\OutputEngine.csproj" />
-  </ItemGroup>
-
 </Project>

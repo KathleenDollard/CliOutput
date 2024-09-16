@@ -1,19 +1,17 @@
-﻿using CliOutput.Primitives;
+﻿using OutputEngine.Primitives;
 using System.Text;
-using CliOutput.Help;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace CliOutput.Targets;
+namespace OutputEngine.Targets;
 
-public class PlainHelpTerminal : TextWriter
+public class PlainTerminal : TextWriter
 {
-    public PlainHelpTerminal(bool shouldRedirect = false)
+    public PlainTerminal(bool shouldRedirect = false)
     {
         redirecting = shouldRedirect;
     }
 
     public override Encoding Encoding { get; } = Encoding.UTF8;
-    private readonly string indent = "  ";
+    private readonly int indentSize = 2;
     private readonly StringBuilder buffer = new();
     private bool redirecting = false;
 
@@ -21,79 +19,21 @@ public class PlainHelpTerminal : TextWriter
 
     public void ClearBuffer() => buffer.Clear();
 
-    public void WriteLine(Help.Help help)
-    {
-        foreach (var section in help.Sections)
-        {
-            switch (section)
-            {
-                case HelpDescription description:
-                    WriteLine(description); break;
-                case HelpUsage usage:
-                    WriteLine(usage); break;
-                case HelpExamples examples:
-                    WriteLine(examples); break;
-                case HelpArguments arguments:
-                    WriteLine(arguments); break;
-                case HelpOptions options:
-                    WriteLine(options); break;
-                case HelpSubcommands subCommands:
-                    WriteLine(subCommands); break;
-            };
-        }
-    }
+    int Width { get; set; } = 80;
 
-    public void WriteSectionHead(HelpSection section)
-        => WriteLine(section.Title + ":");
-
-    public void WriteLine(HelpDescription description)
-    {
-        WriteSectionHead(description);
-        WriteIndentedLine(description.Command.Description);
-    }
-
-    public void WriteLine(HelpUsage usage)
-    {
-        WriteSectionHead(usage);
-        if (usage.Command.SubCommands.Any())
-        {
-            // This is wrong, you'll just get the command twice
-            foreach (var command in usage.Command.SubCommands)
-            {
-                WriteIndentedLine(usage.GetHelpUse());
-            }
-        }
-        else
-        {
-            WriteIndentedLine(usage.GetHelpUse());
-        }
-    }
-
-    public void WriteLine(HelpExamples examples)
-    {
-        WriteSectionHead(examples);
-    }
-
-    public void WriteLine(HelpArguments arguments, int width)
-    {
-        WriteSectionHead(arguments);
-        WriteTable(arguments.GetHelp(), width, 1);
-    }
-
-    public void WriteLine(HelpOptions options)
-        => WriteSectionHead(options);
-
-    public void WriteLine(HelpSubcommands subCommands)
-    {
-        WriteSectionHead(subCommands);
-    }
-
-    public override void WriteLine(string? output)
+    public void WriteLine<T>(T? output)
     {
         if (output is not null)
         {
             Write(output);
         }
+        // This needs to call the parameterless form because
+        // a line break is not be Environment.NewLine in HTML
+        // or markdown
+        WriteLine();
+    }
+    public override void WriteLine()
+    {
         Write(Environment.NewLine);
     }
 
@@ -109,51 +49,87 @@ public class PlainHelpTerminal : TextWriter
         }
     }
 
-    private void WriteIndentedLine(string text)
-    {
-        WriteLine(indent + text);
-    }
+    //private void WriteIndentedLine(string text)
+    //{
+    //    WriteLine(indent + text);
+    //}
 
-    private void WriteIndentedLine(TextGroup textGroup)
-    {
-        Write(indent);
-        WriteLine(textGroup);
-    }
+    //private void WriteIndentedLine(Paragraph textGroup)
+    //{
+    //    Write(indent);
+    //    WriteLine(textGroup);
+    //}
 
-    public void WriteLine(TextGroup textGroup)
+    public void Write(Layout layout, int indentCount = 0)
     {
-        Write(textGroup);
-        Write(Environment.NewLine);
-    }
-
-    public void WriteTable(Table table, int width, int indent)
-    {
-        width = width - indent;
-        var fixedWidthTable = new FixedWidthTable(table);
-        fixedWidthTable.LayoutTable(width);
-        // This writer chooses to ignore the header
-        foreach (var row in table.TableData)
+        foreach (var section in layout.Sections)
         {
-            for (var i = 0; i < table.Columns.Count; i++)
+            Write(section, indentCount);
+        }
+    }
+
+    public virtual void Write(Section section, int indentCount = 0)
+    {
+        Write(section.Title);
+        WriteLine(":");
+        Write((Group)section, 1);
+    }
+
+    public virtual void Write(Group group, int indentCount = 0)
+    {
+        if (!group.Any())
+        {
+            return;
+        }
+        var last = group.Last();
+        foreach (var element in group)
+        {
+            switch (element)
             {
-                Write(indent);
-                Write(row[i]);
+                case Table table: Write(table, indentCount); break;
+                case Paragraph paragraph: Write(paragraph, indentCount); break;
+                default: throw new InvalidOperationException("Unknown element type");
+            }
+            if (!(element == last || element.NoNewLineAfter ))
+            {
+                // For some reason, WriteLine is not working correctly when I send to the buffer for testing
                 WriteLine();
             }
         }
     }
 
-    public void Write(TextGroup textGroup)
+    public virtual void Write(Paragraph paragraph, int indentCount = 0)
     {
-        if (textGroup.Count == 0)
+        var useWidth = Width - indentCount * indentSize;
+        var useIndent = new string(' ', indentCount * indentSize);
+        if (paragraph.Count() == 0)
         {
             return;
         }
-        var lastNonEmptyPartEmittedSpaceOrAtStart = true;
-        var last = textGroup.Last(); ;
-        for (int i = 0; i < textGroup.Count; i++)
+        var parts = paragraph.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
+        var output = CreateParagraphText(parts);
+        var lines = output.Wrap(useWidth);
+        var lastLine = lines.Last();
+        foreach (var line in lines)
         {
-            var part = textGroup[i];
+            Write(useIndent + line);
+            if (line != lastLine)
+            {
+                WriteLine();
+            }
+        }
+
+  
+    }
+
+    protected static string CreateParagraphText(TextPart[] parts)
+    {
+        var lastNonEmptyPartEmittedSpaceOrAtStart = true;
+        var sb = new StringBuilder();
+        var last = parts.Last();
+        for (int i = 0; i < parts.Length; i++)
+        {
+            var part = parts[i];
             // TODO: Determine whether a part where text is whitespace should be emitted
             if (string.IsNullOrEmpty(part.Text))
             {
@@ -161,27 +137,41 @@ public class PlainHelpTerminal : TextWriter
             }
             if (!lastNonEmptyPartEmittedSpaceOrAtStart && part.Whitespace.HasFlag(Whitespace.Before))
             {
-                Write(" ");
+                sb.Append(" ");
             }
-            Write(part);
+            sb.Append(part);
             // TODO: Determine whether a part that emits only whitespace should add an extra space
-            if (part != last && part.Whitespace.HasFlag(Whitespace.After) && MoreNonEmptyParts(textGroup[(i + 1)..]))
+            if (part != last && part.Whitespace.HasFlag(Whitespace.After))
             {
-                Write(" ");
+                sb.Append(" ");
                 lastNonEmptyPartEmittedSpaceOrAtStart = true;
             }
         }
-
-        static bool MoreNonEmptyParts(IEnumerable<TextPart> parts)
-            => parts.Any(part => !string.IsNullOrWhiteSpace(part.Text));
+        return sb.ToString();
     }
 
-    public void Write(TextPart textPart)
+    public virtual void Write(Table table, int indentCount = 0)
+    {
+        // TODO: Add IncludeHeaders to the Table class
+        var includeHeaders = false;
+        var useWidth = Width - indentCount * indentSize;
+        var indent = new string(' ', indentCount * indentSize);
+        var fixedWidthTable = new FixedWidthTable(table);
+        var layout = fixedWidthTable.LayoutTable(useWidth, includeHeaders);
+        // This writer chooses to ignore the header
+        foreach (var row in layout)
+        {
+            foreach (var line in row)
+            {
+                Write(indent);
+                Write(line);
+                WriteLine();
+            }
+        }
+    }
+
+    public void Write(TextPart textPart, int indentCount = 0)
         => Write(textPart.Text);
-
-
-
-
 
 
     //private void WriteLineHelpSectionHead(string? text) => Console.WriteLine(text + ":");
@@ -206,7 +196,7 @@ public class PlainHelpTerminal : TextWriter
     //    //panel.NoBorder().Padding(0, 0, 0, 0);
     //    //AnsiConsole.WriteLine(panel);
     //    AnsiConsole.WriteLine(helpPartTable);
-    //    Console.WriteLine(Environment.NewLine));
+    //    Console.WriteLine());
     //    return 0;
 
     //    Spectre.Console.Table buildHelpPartTable<TItem>(HelpPart<TItem> helpPart, bool anyAliases)

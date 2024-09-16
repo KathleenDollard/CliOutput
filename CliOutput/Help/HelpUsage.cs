@@ -1,27 +1,33 @@
-﻿//using System.Collections;
-
-using CliOutput.Primitives;
-using System.Collections.Generic;
+﻿using OutputEngine.Primitives;
 
 namespace CliOutput.Help;
 
-public class HelpUsage(CliCommand command)
-    : HelpSection("Usage", command)
+public class HelpUsage : HelpSection
 {
-    public TextGroup GetHelpUse()
+    public HelpUsage(CliCommand command)
+        : base("Usage", command)
     {
-        TextGroup ret = [];
+        Add(GetHelpUse());
+    }
+
+    public Paragraph GetHelpUse()
+    {
+        Paragraph ret = new();
         AddHelpUsageLine(Command, ret);
         return ret;
 
-        static void AddHelpUsageLine(CliCommand command, TextGroup textGroup)
+        static void AddHelpUsageLine(CliCommand command, Paragraph paragraph)
         {
-            textGroup.AddRange(command.Ancestors.Reverse().Select(x => new TextPart(x.Name, TextAppearance.LessImportant)));
-            textGroup.Add((TextPart)command.Name);
-            textGroup.AddRange(command.Arguments.Select(arg => usageFromArg(arg)));
+            paragraph.AddRange(command.Ancestors.Reverse().Select(x => new TextPart(x.Name, TextAppearance.LessImportant)));
+            paragraph.Add((TextPart)command.Name);
+            paragraph.AddRange(command.Arguments.Select(arg => usageFromArg(arg)));
+            if (command.SubCommands.Any())
+            {
+                paragraph.Add(new TextPart("[command]", TextAppearance.LessImportant));
+            }
             if (command.Options.Count > 0)
             {
-                textGroup.Add(new TextPart("[OPTIONS]", TextAppearance.LessImportant));
+                paragraph.Add(new TextPart("[options]", TextAppearance.LessImportant));
             }
 
             static TextPart usageFromArg(CliArgument arg)

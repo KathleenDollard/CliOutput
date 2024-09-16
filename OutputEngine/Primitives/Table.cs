@@ -1,44 +1,24 @@
-﻿namespace CliOutput.Primitives;
+﻿
+namespace OutputEngine.Primitives;
 
 /// <summary>
 /// A renderable table.
 /// </summary>
-public sealed class Table
+public sealed class Table : Element
 {
-    private IReadOnlyList<TextGroup>? headerRow;
-    private IReadOnlyList<TextGroup>? footerRow;
-
     public Table(IReadOnlyList<TableColumn> columns)
     {
         Columns = columns;
+        NoNewLineAfter = true;
     }
 
-    public IReadOnlyList<TextGroup>? HeaderRow
+    public IEnumerable<Paragraph?> GetHeaderRow()
     {
-        get => headerRow; 
-        set
+       foreach(var column in Columns)
         {
-        if (value is { } &&  value.Count() != Columns.Count)
-        {
-            throw new ArgumentOutOfRangeException(nameof(HeaderRow), "The number of header columns must match the number of table columns.");
-        }
-            headerRow = value;
+            yield return column.Header;
         }
     }
-
-    public IReadOnlyList<TextGroup>? FooterRow
-    {
-        get => footerRow;
-        set
-        {
-            if (value is { } && value.Count() != Columns.Count)
-            {
-                throw new ArgumentOutOfRangeException(nameof(FooterRow), "The number of footer columns must match the number of table columns.");
-            }
-            footerRow = value;
-        }
-    }
-
 
     /// <summary>
     /// Gets the table columns. This is set via the constructor and 
@@ -49,7 +29,7 @@ public sealed class Table
     /// <summary>
     /// Gets the table data.
     /// </summary>
-    public List<TextGroup[]> TableData { get; } = new();
+    public List<Paragraph[]> TableData { get; } = new();
 
     /// <summary>
     /// Gets or sets the table title.
@@ -57,7 +37,7 @@ public sealed class Table
     public string? Title { get; set; }
     public bool DisplayClosingBar { get; set; }
 
-    public void AddRow(params TextGroup[] row)
+    public void AddRow(params Paragraph[] row)
     {
         if (row.Count() != Columns.Count)
         {
@@ -72,7 +52,6 @@ public sealed class Table
         {
             throw new ArgumentOutOfRangeException(nameof(row), "The number of row items must match the number of table columns.");
         }
-        TableData.Add(row.Select(s=> (TextGroup)s).ToArray());
+        TableData.Add(row.Select(s => new Paragraph(new TextPart(s))).ToArray());
     }
-
 }

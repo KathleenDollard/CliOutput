@@ -1,9 +1,12 @@
-﻿//using System.Collections;
+﻿using OutputEngine;
 
-namespace CliOutput.Help;
+namespace CliOutput;
 
-public class HelpSection(string title, CliCommand command)
+public abstract class HelpSection : Section
 {
-    public CliCommand Command { get; } = command;
-    public string Title { get; } = title;
+    protected HelpSection(string title, CliCommand command)
+        : base(title) 
+        => Command = command;
+
+    public CliCommand Command { get; }
 }

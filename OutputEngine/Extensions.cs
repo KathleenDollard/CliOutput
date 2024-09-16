@@ -1,15 +1,19 @@
-﻿namespace CliOutput;
+﻿namespace OutputEngine;
 
 public static class Extensions
 {
     public static IEnumerable<string> Wrap(this string s, int outputWidth)
     {
+        if (outputWidth <= 0)
+        {
+            throw new ArgumentException("Output width must be greater than 0", nameof(outputWidth));
+        }
         List<string> lines = new();
         var position = 0;
         var lastBreakPosition = 0;
         while (position < s.Length)
         {
-            var start = outputWidth ;  // look for space after outputWidth first
+            var start = outputWidth;  // look for space after outputWidth first
             if (s.Length <= start + lastBreakPosition)
             {
                 lines.Add(s.Substring(lastBreakPosition));
@@ -36,7 +40,7 @@ public static class Extensions
         return lines;
     }
 
-    public static string JoinLines(this IEnumerable<string> lines) 
+    public static string JoinLines(this IEnumerable<string> lines)
         => string.Join(Environment.NewLine, lines);
 
     //    public static Help ToHelpCommand(this Command command, bool canExecute = false)
