@@ -1,13 +1,12 @@
-﻿
 using OutputEngine.Primitives;
 using System.Text;
 
 namespace OutputEngine.Targets;
 
-public class Html : PlainTerminal
+public class Html : CliOutput
 {
-    public Html(bool shouldRedirect = false)
-    : base(shouldRedirect)
+    public Html(OutputContext outputContext)
+    : base(outputContext)
     { }
 
     public override void WriteLine()
@@ -29,12 +28,12 @@ public class Html : PlainTerminal
             return string.Empty;
         }
 
-        return new StringBuilder(indentCount * indentSize * 6).Insert(0, "&nbsp;", indentCount * indentSize).ToString();
+        return new StringBuilder(indentCount * IndentSize * "&nbsp;".Length).Insert(0, "&nbsp;", indentCount * IndentSize).ToString();
     }
 
     public override void Write(Paragraph paragraph, int indentCount = 0)
     {
-        var useWidth = Width - indentCount * indentSize;
+        var useWidth = Width - indentCount * IndentSize;
         if (paragraph.Count() == 0)
         {
             return;

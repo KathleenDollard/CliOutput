@@ -1,0 +1,1 @@
+.\artifacts\bin\Example\debug\Example.exe html

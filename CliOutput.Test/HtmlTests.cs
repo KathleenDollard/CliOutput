@@ -10,7 +10,7 @@ public class HtmlTests
     [Fact]
     public void Outputs_string()
     {
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write("Hello world");
 
@@ -22,7 +22,7 @@ public class HtmlTests
     [Fact]
     public void Outputs_string_with_newline()
     {
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.WriteLine("Hello world");
 
@@ -34,7 +34,7 @@ public class HtmlTests
     [Fact]
     public void Outputs_TextPart()
     {
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
         var textPart = new TextPart("Hello world");
 
         writer.Write(textPart);
@@ -47,7 +47,7 @@ public class HtmlTests
     [Fact]
     public void Outputs_Paragraph()
     {
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
         var paragraph =
                 new Paragraph()
                 {
@@ -65,7 +65,7 @@ public class HtmlTests
     [Fact]
     public void Outputs_Group()
     {
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
         Group textGroup =
             [
                 new Paragraph()
@@ -83,14 +83,14 @@ public class HtmlTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"<p>Hello world</p><br/><br/><p>See you later</p>");
+            .Be($"<p>Hello world</p><p>See you later</p>");
     }
 
 
     [Fact]
     public void Outputs_Section()
     {
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
         Section section =
             new Section("Goodnight moon")
             {
@@ -109,6 +109,6 @@ public class HtmlTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"<h2>Goodnight moon</h2><br/><br/><p>&nbsp;&nbsp;Hello world</p><br/><br/><p>&nbsp;&nbsp;See you later</p>");
+            .Be($"<h2>Goodnight moon</h2><br/><br/><p>&nbsp;&nbsp;Hello world</p><p>&nbsp;&nbsp;See you later</p>");
     }
 }

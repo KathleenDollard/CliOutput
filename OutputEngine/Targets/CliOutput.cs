@@ -3,23 +3,33 @@ using System.Text;
 
 namespace OutputEngine.Targets;
 
-public class PlainTerminal : TextWriter
+public abstract class CliOutput : TextWriter
 {
-    public PlainTerminal(bool shouldRedirect = false)
+    /// <summary>
+    /// Base constructor for writers
+    /// </summary>
+    /// <param name="outputContext"></param>
+    /// <remarks>
+    /// Implementing classes should set an appropriate default 
+    /// OutputStyles if it is null.
+    /// </remarks>
+    protected CliOutput(OutputContext outputContext)
     {
-        redirecting = shouldRedirect;
+        Redirecting = outputContext.ShouldRedirect;
+        OutputContext = outputContext;
+        Width = outputContext.Width;
+        IndentSize = outputContext.IndentSize;
     }
+    public OutputContext OutputContext { get; }
 
-    public override Encoding Encoding { get; } = Encoding.UTF8;
-    protected readonly int indentSize = 2;
+    public override Encoding Encoding => OutputContext.Encoding;
+    protected bool Redirecting { get; }
+    protected int Width { get;  }
+    protected int IndentSize { get;  }
+
     private readonly StringBuilder buffer = new();
-    private bool redirecting = false;
-
     public string GetBuffer() => buffer.ToString();
-
     public void ClearBuffer() => buffer.Clear();
-
-    protected int Width { get; set; } = 80;
 
     public void WriteLine<T>(T? output)
     {
@@ -39,26 +49,15 @@ public class PlainTerminal : TextWriter
 
     public override void Write(string? text)
     {
-        if (redirecting)
+        if (Redirecting)
         {
             buffer.Append(text);
         }
         else
         {
-            Console.WriteLine(text);
+            Console.Write(text);
         }
     }
-
-    //private void WriteIndentedLine(string text)
-    //{
-    //    WriteLine(indent + text);
-    //}
-
-    //private void WriteIndentedLine(Paragraph textGroup)
-    //{
-    //    Write(indent);
-    //    WriteLine(textGroup);
-    //}
 
     public void Write(Layout layout, int indentCount = 0)
     {
@@ -90,18 +89,13 @@ public class PlainTerminal : TextWriter
                 case Paragraph paragraph: Write(paragraph, indentCount); break;
                 default: throw new InvalidOperationException("Unknown element type");
             }
-            if (!(element == last || element.NoNewLineAfter ))
-            {
-                // For some reason, WriteLine is not working correctly when I send to the buffer for testing
-                WriteLine();
-            }
         }
     }
 
     public virtual void Write(Paragraph paragraph, int indentCount = 0)
     {
-        var useWidth = Width - indentCount * indentSize;
-        var useIndent = new string(' ', indentCount * indentSize);
+        var useWidth = Width - indentCount * IndentSize;
+        var useIndent = new string(' ', indentCount * IndentSize);
         if (paragraph.Count() == 0)
         {
             return;
@@ -113,10 +107,10 @@ public class PlainTerminal : TextWriter
         foreach (var line in lines)
         {
             Write(useIndent + line);
-            if (line != lastLine)
-            {
+            //if (line != lastLine)
+            //{
                 WriteLine();
-            }
+            //}
         }
 
   
@@ -154,10 +148,14 @@ public class PlainTerminal : TextWriter
     {
         // TODO: Add IncludeHeaders to the Table class
         var includeHeaders = false;
-        var useWidth = Width - indentCount * indentSize;
-        var indent = new string(' ', indentCount * indentSize);
+        var useWidth = Width - indentCount * IndentSize;
+        var indent = new string(' ', indentCount * IndentSize);
         var fixedWidthTable = new FixedWidthTable(table);
         var layout = fixedWidthTable.LayoutTable(useWidth, includeHeaders);
+        if (layout is null)
+        {
+            return;
+        }
         // This writer chooses to ignore the header
         foreach (var row in layout)
         {

@@ -12,7 +12,7 @@ public class HelpOptions : HelpSection
         var table = GetTable();
         foreach (var option in Command.Options)
         {
-            table.AddRow([option.Name, option.Description]);
+            table.AddRow([option.Name, option.Description ?? string.Empty]);
         }
         Add(table);
     }

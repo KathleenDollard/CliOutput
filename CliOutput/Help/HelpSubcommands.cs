@@ -12,7 +12,7 @@ public class HelpSubcommands : HelpSection
         var table = GetTable();
         foreach (var subcommand in Command.SubCommands)
         {
-            table.AddRow([subcommand.Name, subcommand.Description]);
+            table.AddRow([subcommand.Name, subcommand.Description ?? string.Empty]);
         }
         Add(table);
     }

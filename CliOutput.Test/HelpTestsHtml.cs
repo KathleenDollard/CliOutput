@@ -1,5 +1,6 @@
 ﻿using CliOutput.Help;
 using FluentAssertions;
+using OutputEngine;
 using OutputEngine.Targets;
 
 namespace CliOutput.Test;
@@ -9,10 +10,10 @@ public class HelpTestsHtml
     [Fact]
     public void Outputs_description()
     {
-        var command = new CliCommand("Hello", "World");
+        var command = new CliCommand("Hello", description: "World");
         var help = HelpLayout.Create(command);
         var description = help.Sections.OfType<HelpDescription>().First();
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write(description);
 
@@ -27,7 +28,7 @@ public class HelpTestsHtml
         var command = new CliCommand("Hello", "World");
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write(usage);
 
@@ -46,7 +47,7 @@ public class HelpTestsHtml
         command.AddSubCommand(subcommand2);
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write(usage);
 
@@ -65,7 +66,7 @@ public class HelpTestsHtml
         subcommand1.AddSubCommand(subcommand2);
         var help = HelpLayout.Create(subcommand2);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write(usage);
 
@@ -77,12 +78,12 @@ public class HelpTestsHtml
     [Fact]
     public void Outputs_usage_with_arguments()
     {
-        var command = new CliCommand("Hello", "World");
-        command.Arguments.Add(new CliArgument("Morning", "It is the morning."));
-        command.Arguments.Add(new CliArgument("Evening", "Now, it is the evening"));
+        var command = new CliCommand("Hello", description: "World");
+        command.Arguments.Add(new CliArgument("Morning", description: "It is the morning."));
+        command.Arguments.Add(new CliArgument("Evening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write(usage);
 
@@ -94,12 +95,12 @@ public class HelpTestsHtml
     [Fact]
     public void Outputs_usage_with_options()
     {
-        var command = new CliCommand("Hello", "World");
-        command.Options.Add(new CliOption("Morning", "It is the morning."));
-        command.Options.Add(new CliOption("Evening", "Now, it is the evening"));
+        var command = new CliCommand("Hello", description: "World");
+        command.Options.Add(new CliOption("Morning", description: "It is the morning."));
+        command.Options.Add(new CliOption("Evening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write(usage);
 
@@ -116,7 +117,7 @@ public class HelpTestsHtml
         command.Arguments.Add(new CliArgument("VerEarlyEvening", "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpArguments>().First();
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write(arguments);
 
@@ -134,7 +135,7 @@ public class HelpTestsHtml
         command.Arguments.Add(new CliArgument("Morning", "It is the morning."));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpArguments>().First();
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write(arguments);
 
@@ -147,12 +148,12 @@ public class HelpTestsHtml
     [Fact]
     public void Outputs_options()
     {
-        var command = new CliCommand("Hello", "World");
-        command.Options.Add(new CliOption("Morning", "It is the morning."));
-        command.Options.Add(new CliOption("VerEarlyEvening", "Now, it is the evening"));
+        var command = new CliCommand("Hello", description: "World");
+        command.Options.Add(new CliOption("Morning", description: "It is the morning."));
+        command.Options.Add(new CliOption("VerEarlyEvening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpOptions>().First();
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write(arguments);
 
@@ -170,7 +171,7 @@ public class HelpTestsHtml
         command.AddSubCommand(new CliCommand("VerEarlyEvening", "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpSubcommands>().First();
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write(arguments);
 
@@ -183,15 +184,15 @@ public class HelpTestsHtml
     [Fact]
     public void Outputs_help()
     {
-        var command = new CliCommand("Hello", "World");
-        command.Arguments.Add(new CliArgument("Morning", "It is the morning."));
-        command.Arguments.Add(new CliArgument("VeryEarlyEvening", "Now, it is the evening."));
-        command.Options.Add(new CliOption("Red", "The color is read."));
-        command.Options.Add(new CliOption("Blue", "The color is blue."));
-        command.AddSubCommand(new CliCommand("One", "The first subcommand."));
-        command.AddSubCommand(new CliCommand("Two", "The second subcommand"));
+        var command = new CliCommand("Hello", description: "World");
+        command.Arguments.Add(new CliArgument("Morning", description: "It is the morning."));
+        command.Arguments.Add(new CliArgument("VeryEarlyEvening", description: "Now, it is the evening."));
+        command.Options.Add(new CliOption("Red", description: "The color is read."));
+        command.Options.Add(new CliOption("Blue", description: "The color is blue."));
+        command.AddSubCommand(new CliCommand("One", description: "The first subcommand."));
+        command.AddSubCommand(new CliCommand("Two", description: "The second subcommand"));
         var help = HelpLayout.Create(command);
-        var writer = new Html(true);
+        var writer = new Html(new OutputContext(true));
 
         writer.Write(help);
 

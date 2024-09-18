@@ -1,12 +1,12 @@
 ﻿namespace CliOutput;
 
-public class CliSymbol(string name, string description)
+public class CliSymbol(string name, string? description)
 {
     public string Name { get; set; } = name;
-    public string Description { get; set; } = description;
+    public string? Description { get; set; } = description;
 }
 
-public class CliCommand(string name, string description)
+public class CliCommand(string name, string? description)
     : CliSymbol(name, description)
 {
     public List<CliArgument> Arguments { get; } = [];
@@ -28,11 +28,13 @@ public class CliCommand(string name, string description)
                 : [command, .. GetAncestors(command.Parent)];
 }
 
-public class CliOption(string name, string description)
+public class CliOption(string name, string[]? aliases = null, string? description = null)
     : CliSymbol(name, description)
-{ }
+{
+    public string[]? Aliases { get; } = aliases;
+}
 
-public class CliArgument(string name, string description)
+public class CliArgument(string name, string? description)
     : CliSymbol(name, description)
 {
     public string DisplayName => Name.ToUpper();
