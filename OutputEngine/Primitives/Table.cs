@@ -1,5 +1,4 @@
-﻿
-namespace OutputEngine.Primitives;
+﻿namespace OutputEngine.Primitives;
 
 /// <summary>
 /// A renderable table.
@@ -9,7 +8,6 @@ public sealed class Table : Element
     public Table(IReadOnlyList<TableColumn> columns)
     {
         Columns = columns;
-        NoNewLineAfter = true;
     }
 
     public IEnumerable<Paragraph?> GetHeaderRow()
@@ -48,10 +46,7 @@ public sealed class Table : Element
 
     public void AddRow(params string[] row)
     {
-        if (row.Count() != Columns.Count)
-        {
-            throw new ArgumentOutOfRangeException(nameof(row), "The number of row items must match the number of table columns.");
-        }
-        TableData.Add(row.Select(s => new Paragraph(new TextPart(s))).ToArray());
+        var rowWithTextParts = row.Select(s => new Paragraph(new TextPart(s))).ToArray();
+        AddRow(rowWithTextParts);
     }
 }

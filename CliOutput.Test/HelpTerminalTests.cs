@@ -1,10 +1,11 @@
 using FluentAssertions;
 using CliOutput.Help;
 using OutputEngine.Targets;
+using OutputEngine;
 
 namespace CliOutput.Test;
 
-public class HelpTests
+public class HelpTerminalTests
 {
     [Fact]
     public void Outputs_description()
@@ -12,13 +13,13 @@ public class HelpTests
         var command = new CliCommand("Hello", "World");
         var help = HelpLayout.Create(command);
         var description = help.Sections.OfType<HelpDescription>().First();
-        var writer = new PlainTerminal(true);
+        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
 
         writer.Write(description);
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Description:{Environment.NewLine}  World");
+            .Be($"Description:{Environment.NewLine}  World{Environment.NewLine}");
     }
 
     [Fact]
@@ -27,13 +28,13 @@ public class HelpTests
         var command = new CliCommand("Hello", "World");
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new PlainTerminal(true);
+        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
 
         writer.Write(usage);
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Usage:{Environment.NewLine}  Hello");
+            .Be($"Usage:{Environment.NewLine}  Hello{Environment.NewLine}");
     }
 
     [Fact]
@@ -46,13 +47,13 @@ public class HelpTests
         command.AddSubCommand(subcommand2);
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new PlainTerminal(true);
+        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
 
         writer.Write(usage);
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Usage:{Environment.NewLine}  Hello [command]");
+            .Be($"Usage:{Environment.NewLine}  Hello [command]{Environment.NewLine}");
     }
 
     [Fact]
@@ -65,13 +66,13 @@ public class HelpTests
         subcommand1.AddSubCommand(subcommand2);
         var help = HelpLayout.Create(subcommand2);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new PlainTerminal(true);
+        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
 
         writer.Write(usage);
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Usage:{Environment.NewLine}  Hello Welcome Brrr");
+            .Be($"Usage:{Environment.NewLine}  Hello Welcome Brrr{Environment.NewLine}");
     }
 
     [Fact]
@@ -82,30 +83,30 @@ public class HelpTests
         command.Arguments.Add(new CliArgument("Evening", "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new PlainTerminal(true);
+        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
 
         writer.Write(usage);
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Usage:{Environment.NewLine}  Hello <MORNING><EVENING>");
+            .Be($"Usage:{Environment.NewLine}  Hello <MORNING><EVENING>{Environment.NewLine}");
     }
 
     [Fact]
     public void Outputs_usage_with_options()
     {
         var command = new CliCommand("Hello", "World");
-        command.Options.Add(new CliOption("Morning", "It is the morning."));
-        command.Options.Add(new CliOption("Evening", "Now, it is the evening"));
+        command.Options.Add(new CliOption("Morning", description: "It is the morning."));
+        command.Options.Add(new CliOption("Evening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new PlainTerminal(true);
+        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
 
         writer.Write(usage);
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Usage:{Environment.NewLine}  Hello [options]");
+            .Be($"Usage:{Environment.NewLine}  Hello [options]{Environment.NewLine}");
     }
 
     [Fact]
@@ -116,7 +117,7 @@ public class HelpTests
         command.Arguments.Add(new CliArgument("VerEarlyEvening", "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpArguments>().First();
-        var writer = new PlainTerminal(true);
+        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
 
         writer.Write(arguments);
 
@@ -127,14 +128,14 @@ public class HelpTests
     }
 
     [Fact]
-    public void Outputs_arguments_with_long_descrption()
+    public void Outputs_arguments_with_long_description()
     {
         var command = new CliCommand("Hello", "World");
         command.Arguments.Add(new CliArgument("EarlyEvening", "Now, it is the evening, with a very, very, very, very, very,  very, very,  very, very,  very, very,  very, very,  very, very,  very, very,  very, very,  very, very, long description"));
         command.Arguments.Add(new CliArgument("Morning", "It is the morning."));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpArguments>().First();
-        var writer = new PlainTerminal(true);
+        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
 
         writer.Write(arguments);
 
@@ -148,11 +149,11 @@ public class HelpTests
     public void Outputs_options()
     {
         var command = new CliCommand("Hello", "World");
-        command.Options.Add(new CliOption("Morning", "It is the morning."));
-        command.Options.Add(new CliOption("VerEarlyEvening", "Now, it is the evening"));
+        command.Options.Add(new CliOption("Morning", description: "It is the morning."));
+        command.Options.Add(new CliOption("VerEarlyEvening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpOptions>().First();
-        var writer = new PlainTerminal(true);
+        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
 
         writer.Write(arguments);
 
@@ -170,7 +171,7 @@ public class HelpTests
         command.AddSubCommand(new CliCommand("VerEarlyEvening", "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpSubcommands>().First();
-        var writer = new PlainTerminal(true);
+        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
 
         writer.Write(arguments);
 
@@ -186,12 +187,12 @@ public class HelpTests
         var command = new CliCommand("Hello", "World");
         command.Arguments.Add(new CliArgument("Morning", "It is the morning."));
         command.Arguments.Add(new CliArgument("VeryEarlyEvening", "Now, it is the evening."));
-        command.Options.Add(new CliOption("Red", "The color is read."));
-        command.Options.Add(new CliOption("Blue", "The color is blue."));
-        command.AddSubCommand(new CliCommand("One", "The first subcommand."));
-        command.AddSubCommand(new CliCommand("Two", "The second subcommand"));
+        command.Options.Add(new CliOption("Red", description: "The color is read."));
+        command.Options.Add(new CliOption("Blue", description: "The color is blue."));
+        command.AddSubCommand(new CliCommand("One", description: "The first subcommand."));
+        command.AddSubCommand(new CliCommand("Two", description: "The second subcommand"));
         var help = HelpLayout.Create(command);
-        var writer = new PlainTerminal(true);
+        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
 
         writer.Write(help);
 

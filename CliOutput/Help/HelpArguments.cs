@@ -9,7 +9,7 @@ public class HelpArguments : HelpSection
         var table = GetTable();
         foreach (var arg in Command.Arguments)
         {
-            table.AddRow([arg.Name, arg.Description]);
+            table.AddRow([arg.Name, arg.Description ?? string.Empty]);
         }
         Add( table);
     }

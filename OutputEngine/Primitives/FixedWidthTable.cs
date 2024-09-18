@@ -15,8 +15,12 @@ public class FixedWidthTable
 
     private WorkingValues workingValues;
 
-    public IEnumerable<IEnumerable<string>> LayoutTable(int width, bool includeHeaders = false)
+    public IEnumerable<IEnumerable<string>>? LayoutTable(int width, bool includeHeaders = false)
     {
+        if (Table.Columns.Count() == 0 || Table.TableData.Count == 0)
+        {
+            return null;
+        }
         var columnWidths = GetAdjustedColumnWidths(width, includeHeaders).ToArray();
         var rows = GetRows(Table, columnWidths, includeHeaders);
         var tableLines = new List<IEnumerable<string>>();
