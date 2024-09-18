@@ -2,10 +2,10 @@
 
 namespace OutputEngine.Targets;
 
-public class Markdown : PlainTerminal
+public class Markdown : CliOutput
 {
-    public Markdown(bool shouldRedirect = false)
-        : base(shouldRedirect)
+    public Markdown(OutputContext outputContext)
+        : base(outputContext)
     { }
     public override void WriteLine()
     {

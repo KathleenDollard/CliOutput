@@ -20,7 +20,7 @@ public sealed class TableColumn(Paragraph header,
                        TableColumnAlignment alignment = TableColumnAlignment.Left,
                        byte maxWidth = maxAllowedColumnWidth,
                        byte minWidth = 15)
-        : this(new Paragraph { new TextPart(header) }, columnKind, alignment, maxWidth, minWidth)
+        : this(new Paragraph(header), columnKind, alignment, maxWidth, minWidth)
     { }
 
     /// <summary>

@@ -18,16 +18,16 @@ public class HelpUsage : HelpSection
 
         static void AddHelpUsageLine(CliCommand command, Paragraph paragraph)
         {
-            paragraph.AddRange(command.Ancestors.Reverse().Select(x => new TextPart(x.Name, TextAppearance.LessImportant)));
-            paragraph.Add((TextPart)command.Name);
+            paragraph.AddRange(command.Ancestors.Reverse().Select(x => new TextPart(x.Name, TextPartAppearance.LessImportant)));
+            paragraph.Add(new TextPart(command.Name));
             paragraph.AddRange(command.Arguments.Select(arg => usageFromArg(arg)));
             if (command.SubCommands.Any())
             {
-                paragraph.Add(new TextPart("[command]", TextAppearance.LessImportant));
+                paragraph.Add(new TextPart("[command]", TextPartAppearance.LessImportant));
             }
             if (command.Options.Count > 0)
             {
-                paragraph.Add(new TextPart("[options]", TextAppearance.LessImportant));
+                paragraph.Add(new TextPart("[options]", TextPartAppearance.LessImportant));
             }
 
             static TextPart usageFromArg(CliArgument arg)

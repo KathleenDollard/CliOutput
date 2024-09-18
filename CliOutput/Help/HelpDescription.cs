@@ -9,7 +9,7 @@ public class HelpDescription : HelpSection
     {
         if (command.Description is not null)
         {
-            Add(new Paragraph(new TextPart(command.Description)));
+            Add(new Paragraph(command.Description));
         }
     }
 }

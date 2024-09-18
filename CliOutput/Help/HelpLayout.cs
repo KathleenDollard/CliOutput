@@ -26,7 +26,6 @@ public class HelpLayout : Layout
                 new HelpArguments(command),
                 new HelpOptions(command),
                 new HelpSubcommands(command),
-                new HelpFootnotes(command),
             ]);
 
 }
