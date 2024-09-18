@@ -11,7 +11,7 @@ public class PlainTerminal : TextWriter
     }
 
     public override Encoding Encoding { get; } = Encoding.UTF8;
-    private readonly int indentSize = 2;
+    protected readonly int indentSize = 2;
     private readonly StringBuilder buffer = new();
     private bool redirecting = false;
 
@@ -19,7 +19,7 @@ public class PlainTerminal : TextWriter
 
     public void ClearBuffer() => buffer.Clear();
 
-    int Width { get; set; } = 80;
+    protected int Width { get; set; } = 80;
 
     public void WriteLine<T>(T? output)
     {
