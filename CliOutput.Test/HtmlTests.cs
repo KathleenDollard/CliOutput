@@ -123,10 +123,11 @@ public class HtmlTests
             ]);
         table.TableData.Add([new Paragraph("Alice"), new Paragraph("25")]);
         table.TableData.Add([new Paragraph("Bob"), new Paragraph("30")]);
+        table.IncludeHeaders = true;
         writer.Write(table);
         var result = writer.GetBuffer();
         result.Should()
-            .Be("<table><tr><td>Name</td><td>Age</td></tr><tr><td>Alice</td><td>25</td></tr><tr><td>Bob</td><td>30</td><tr></table>");
+            .Be("<table><tr><th>Name</th><th>Age</th></tr><tr><td>Alice</td><td>25</td></tr><tr><td>Bob</td><td>30</td></tr></table>");
     }
 
     [Theory]

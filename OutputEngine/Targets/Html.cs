@@ -6,7 +6,7 @@ namespace OutputEngine.Targets;
 public class Html : CliOutput
 {
     public Html(OutputContext outputContext)
-    : base(outputContext)
+        : base(outputContext)
     { }
 
     public override void WriteLine()
@@ -16,7 +16,7 @@ public class Html : CliOutput
 
     public override void Write(Section section, int indentCount = 0)
     {
-        WriteLine($"<h2>{section.Title.Text}</h2>");
+        Write($"<h3>{section.Title.Text}</h3>");
         Write((Group)section, 1);
     }
 
@@ -70,9 +70,12 @@ public class Html : CliOutput
 
     public override void Write(Table table, int indentCount = 0)
     {
-        // TODO: Add IncludeHeaders to the Table class
-        var includeHeaders = false;
-        var headers = includeHeaders
+        if (table.TableData.Count == 0)
+        {
+            return;
+        }
+
+        var headers = table.IncludeHeaders
             ? $"<tr><th>{string.Join("</th><th>", table.Columns.Select(col => col.Header))}</th></tr>"
             : string.Empty;
 
