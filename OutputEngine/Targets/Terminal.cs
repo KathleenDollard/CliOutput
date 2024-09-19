@@ -6,7 +6,9 @@ public class Terminal : CliOutput
 {
     public Terminal(OutputContext outputContext)
         : base(outputContext)
-    {  }
+    {  
+    OutputStyles = outputContext.OutputStyles ?? new OutputStyles();
+    }
 
     public override void WriteLine()
     {
@@ -18,5 +20,4 @@ public class Terminal : CliOutput
         base.Write(section, indentCount);
         Write(Environment.NewLine);
     }
-
 }

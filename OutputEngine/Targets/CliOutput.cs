@@ -1,7 +1,5 @@
 ﻿using OutputEngine.Primitives;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
-using System.Xml.Linq;
 
 namespace OutputEngine.Targets;
 
@@ -21,6 +19,7 @@ public abstract class CliOutput : TextWriter
         OutputContext = outputContext;
         Width = outputContext.Width;
         IndentSize = outputContext.IndentSize;
+        OutputStyles = outputContext.OutputStyles ?? new OutputStyles(); ;
     }
     public OutputContext OutputContext { get; }
 
@@ -28,6 +27,7 @@ public abstract class CliOutput : TextWriter
     protected bool Redirecting { get; }
     protected int Width { get; }
     protected int IndentSize { get; }
+    protected OutputStyles?  OutputStyles { get; set;}
 
     private readonly StringBuilder buffer = new();
     public string GetBuffer() => buffer.ToString();

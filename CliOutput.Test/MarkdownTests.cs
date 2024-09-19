@@ -131,6 +131,7 @@ public class MarkdownTests
             .Be($"|Name|Age|{Environment.NewLine}|---|---|{Environment.NewLine}|Alice|25|{Environment.NewLine}|Bob|30|{Environment.NewLine}");
     }
 
+    /* Rethinking styles
     [Theory]
     [InlineData(ParagraphAppearance.Heading1, "# Hello world")]
     [InlineData(ParagraphAppearance.Heading2, "## Hello world")]
@@ -161,5 +162,6 @@ public class MarkdownTests
             .Be($"{expected}{Environment.NewLine}{Environment.NewLine}");
 
     }
+    */
 
 }

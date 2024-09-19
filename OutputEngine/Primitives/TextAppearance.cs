@@ -9,21 +9,8 @@ public static class ParagraphAppearance
     public const string Normal = "NormalParagraph";
     public const string Warning = "Warning";
     public const string Error = "Error";
-    public const string Heading1 = "Heading1";
-    public const string Heading2 = "Heading2";
-    public const string Heading3 = "Heading3";
-    public const string Heading4 = "Heading4";
-    public const string Heading5 = "Heading5";
-    public const string Heading6 = "Heading6";
-    // Consider making block quotes elements
-    public const string BlockQuote = "BlockQuote";
-    public const string BlockQuoteDoubled = "BlockQuoteDoubled";
-    public const string BlockQuoteTripled = "BlockQuoteTripled";
-    public const string NumberedList = "NumberedItem";
-    public const string BulletedList = "BulletedItem";
-    public const string DefinitionList = "DefinitionList";
-    public const string TaskItemUnchecked = "TaskItemUnchecked";
-    public const string TaskItemChecked = "TaskItemChecked";
+    public const string CodeBlock = "CodeBlock";
+    public const string SectionTitle = "SectionTitle";
 }
 
 /// <summary>
@@ -35,7 +22,7 @@ public static class TextPartAppearance
     public const string Normal = "NormalText";
     public const string LessImportant = "LessImportant";
     public const string Important = "Important";
-    public const string Code = "Code";
+    public const string InlineCode = "InlineCode";
 }
 
 /// <summary>
@@ -51,17 +38,17 @@ public struct CustomTextAppearance
     public Color Color { get; set; }
 }
 
-public static class CustomTextAppearanceStyle
-{
-    public const string Italic = "Italic";
-    public const string Bold = "Bold";
-    public const string Underline = "Underline";
-    public const string Strikethrough = "Strikethrough";
-    public const string Dim = "Dim";
-    public const string Subscript = "Subscript";
-    public const string Superscript = "Superscript";
-    public const string Highlight = "Highlight";
-}
+//public static class CustomTextAppearanceStyle
+//{
+//    public const string Italic = "Italic";
+//    public const string Bold = "Bold";
+//    public const string Underline = "Underline";
+//    public const string Strikethrough = "Strikethrough";
+//    public const string Dim = "Dim";
+//    public const string Subscript = "Subscript";
+//    public const string Superscript = "Superscript";
+//    public const string Highlight = "Highlight";
+//}
 
 // TODO: Figure out color. (not in a separate file because not clear we need an enum)
 /// <summary>

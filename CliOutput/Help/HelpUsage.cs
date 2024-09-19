@@ -20,7 +20,10 @@ public class HelpUsage : HelpSection
         {
             paragraph.AddRange(command.Ancestors.Reverse().Select(x => new TextPart(x.Name, TextPartAppearance.LessImportant)));
             paragraph.Add(new TextPart(command.Name));
-            paragraph.AddRange(command.Arguments.Select(arg => usageFromArg(arg)));
+            if (command.Arguments.Any())
+            {
+                paragraph.AddRange(command.Arguments.Select(arg => UsageFromArg(arg)));
+            }
             if (command.SubCommands.Any())
             {
                 paragraph.Add(new TextPart("[command]", TextPartAppearance.LessImportant));
@@ -30,8 +33,8 @@ public class HelpUsage : HelpSection
                 paragraph.Add(new TextPart("[options]", TextPartAppearance.LessImportant));
             }
 
-            static TextPart usageFromArg(CliArgument arg)
-               => new($"<{arg.DisplayName}>", whitespace: Whitespace.NeitherBeforeOrAfter);
+            static TextPart UsageFromArg(CliArgument arg)
+               => new($"<{arg.DisplayName}>");
         }
 
     }

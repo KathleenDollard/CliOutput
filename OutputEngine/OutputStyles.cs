@@ -2,16 +2,30 @@
 
 namespace OutputEngine;
 
-public abstract class OutputStyles
+public class OutputStyles
 {
     protected Dictionary<string, (string? open, string? close)> Styles
-    { get; set; } = new()
+    { get; set; } = new();
+
+
+    public OutputStyles()
     {
-        //["Important"] = ("[Bold]", "[Bold]"),
-        //["Error"] = ("[Important][Red]", "[Important][Red]"),
-        //["Code"] = ("'", "'"),
-        //["BulletedItem"] = ("-", null),
-    };
+        AddStyle("Important", Important);
+        AddStyle("SectionTitle", SectionTitle);
+        AddStyle("InlineCode", InlineCode);
+        AddStyle("AngleBrackets", ("<", ">"));
+        AddStyle("SquareBrackets", ("[", "]"));
+        AddStyle("SquareAndAngleBrackets", ("[<", ">]"));
+    }
+
+    protected virtual (string? open, string? close) Important => (null, null);
+    protected virtual (string? open, string? close) SectionTitle => (null, ":");
+    protected virtual (string? open, string? close) InlineCode => (null, null);
+
+    protected void AddStyle(string name, (string?, string?) style)
+    {
+        Styles[name] = style;
+    }
 
     protected void AddStyle(string name, string? open, string? close)
     {
