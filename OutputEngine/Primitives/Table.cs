@@ -34,6 +34,7 @@ public sealed class Table : Element
     /// </summary>
     public string? Title { get; set; }
     public bool DisplayClosingBar { get; set; }
+    public bool IncludeHeaders { get; set; }
 
     public void AddRow(params Paragraph[] row)
     {
