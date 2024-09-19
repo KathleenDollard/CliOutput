@@ -1,5 +1,4 @@
-﻿using System.Web;
-using OutputEngine.Primitives;
+﻿using OutputEngine.Primitives;
 
 namespace OutputEngine.Targets;
 
@@ -30,7 +29,7 @@ public class Markdown : CliOutput
         }
         var parts = paragraph.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
         var output = CreateParagraphText(parts);
-        output = HttpUtility.HtmlEncode(output);
+        output = MarkdownEncode(output);
         WriteLine(output);
     }
 
@@ -55,11 +54,18 @@ public class Markdown : CliOutput
             {
                 var parts = row[i].Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
                 var output = CreateParagraphText(parts);
-                output = HttpUtility.HtmlEncode(output);
+                output = MarkdownEncode(output);
                 Write(output);
                 Write("|");
             }
             Write(Environment.NewLine);
         }
+    }
+
+    private string MarkdownEncode(string input)
+    {
+        return input.Replace("<", "\\<").Replace(">", "\\>");
+        // const string escapeCharacterPattern = @"([<>])";
+        // return System.Text.RegularExpressions.Regex.Replace(input, escapeCharacterPattern, "\\$1");
     }
 }

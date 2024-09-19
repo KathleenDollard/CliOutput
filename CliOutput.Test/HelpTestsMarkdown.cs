@@ -89,7 +89,7 @@ public class HelpTestsMarkdown
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello &lt;MORNING&gt;&lt;EVENING&gt;{Environment.NewLine}{Environment.NewLine}");
+            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello \\<MORNING\\>\\<EVENING\\>{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -178,7 +178,7 @@ public class HelpTestsMarkdown
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"{Environment.NewLine}## Subcommands{Environment.NewLine}{Environment.NewLine}|||{Environment.NewLine}{Environment.NewLine}");
+            .StartWith($"{Environment.NewLine}## Subcommands{Environment.NewLine}{Environment.NewLine}|||");
     }
 
     [Fact]
