@@ -39,7 +39,7 @@ rootCommand.AddSubCommand(buildCommand);
 //
 // The future command line would be something like this, but we need to get comfy with having arguments to help:
 //   dotnet build --help-r markdown (Kathleen
-//   dotnet build --help-r html     (Buyah)
+//   dotnet build --help-r html     (Buyaa)
 //   dotnet build --help-r rich     (John?)
 //   dotnet build -h                (default to plain text)
 
@@ -47,7 +47,7 @@ rootCommand.AddSubCommand(buildCommand);
 
 var help = HelpLayout.Create(buildCommand);
 var outputContext = new OutputContext();
-Console.WriteLine("------Start------");
+//Console.WriteLine("------Start------");
 var renderer = args.LastOrDefault() switch
 {
     "markdown" => (OutputEngine.Targets.CliOutput)new Markdown(outputContext),
@@ -56,4 +56,4 @@ var renderer = args.LastOrDefault() switch
     _ => new Terminal(outputContext)
 };
 renderer.Write(help);
-Console.WriteLine("------End------");
+//Console.WriteLine("------End------");
