@@ -5,7 +5,6 @@ public struct TextPart
     public static implicit operator string(TextPart textPart) => textPart.Text;
 
     public Uri? Link { get; set; }
-    //public List<Footnote>? Footnote { get; private set; }
 
     public string Text { get; }
     public Whitespace Whitespace { get; }

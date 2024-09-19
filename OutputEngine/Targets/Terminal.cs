@@ -15,8 +15,8 @@ public class Terminal : CliOutput
 
     public override void Write(Section section, int indentCount = 0)
     {
-        Write(section.Title);
-        WriteLine(":");
-        Write((Group)section, 1);
+        base.Write(section, indentCount);
+        Write(Environment.NewLine);
     }
+
 }
