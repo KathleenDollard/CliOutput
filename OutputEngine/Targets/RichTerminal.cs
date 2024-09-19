@@ -11,8 +11,27 @@ public class RichTerminal : Terminal
 
     public override void Write(Section section, int indentCount = 0)
     {
-        AnsiConsole.WriteLine($"[bold]{section.Title}[/]");
+        AnsiConsole.Write(new Markup(Markup.Escape(section.Title.Text), new Style(decoration: Decoration.Bold)));
+        AnsiConsole.WriteLine();
         Write((Group)section, 1);
+    }
+
+    public override void Write(Group group, int indentCount = 0)
+    {
+        if (!group.Any())
+        {
+            return;
+        }
+        var last = group.Last();
+        foreach (var element in group)
+        {
+            switch (element)
+            {
+                case Primitives.Table table: Write(table, indentCount); break;
+                case Primitives.Paragraph paragraph: Write(paragraph, indentCount); break;
+                default: throw new InvalidOperationException("Unknown element type");
+            }
+        }
     }
 
     public override void Write(Primitives.Paragraph paragraph, int indentCount = 0)
@@ -28,9 +47,18 @@ public class RichTerminal : Terminal
         var output = CreateParagraphText(parts);
         var lines = output.Wrap(useWidth);
 
+        // TO-DO: Test different appearances on different terminal backgrounds
+        // to ensure colors work for different environments
+        var style = paragraph.Appearance switch
+        {
+            ParagraphAppearance.Error => new Style(foreground: Spectre.Console.Color.Red, background: Spectre.Console.Color.Black, decoration: Decoration.Bold),
+            ParagraphAppearance.Warning => new Style(foreground: Spectre.Console.Color.Yellow, background: Spectre.Console.Color.Black, decoration: Decoration.Bold),
+            _ => new Style(decoration: Decoration.None),
+        };
+
         foreach (var line in lines)
         {
-            AnsiConsole.Write(line);
+            AnsiConsole.Write(new Markup(Markup.Escape(line), style));
             AnsiConsole.WriteLine();
         }
     }
@@ -52,7 +80,7 @@ public class RichTerminal : Terminal
 
         foreach (var col in table.Columns)
         {
-            result.AddColumn(new Spectre.Console.TableColumn(col.Header.ToString()));
+            result.AddColumn(new Spectre.Console.TableColumn(col.Header != null? col.Header.ToString(): string.Empty));
         }
 
         foreach (var row in table.TableData)
