@@ -90,6 +90,7 @@ public class MarkdownTests
     public void Outputs_Section()
     {
         var writer = new Markdown(new OutputContext(true));
+        writer.OutputContext.OutputStyles = new MarkdownStyles();
         Section section =
             new Section("Goodnight moon")
             {
@@ -117,9 +118,10 @@ public class MarkdownTests
         var writer = new Markdown(new OutputContext(true));
         var table = new Table(
             [
-            new TableColumn("Name"),
-            new TableColumn("Age")
+                new TableColumn("Name"),
+                new TableColumn("Age")
             ]);
+        table.IncludeHeaders= true;
         table.TableData.Add([new Paragraph("Alice"), new Paragraph("25")]);
         table.TableData.Add([new Paragraph("Bob"), new Paragraph("30")]);
         table.IncludeHeaders = true;

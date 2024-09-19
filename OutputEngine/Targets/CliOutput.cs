@@ -1,5 +1,7 @@
 ﻿using OutputEngine.Primitives;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
+using System.Xml.Linq;
 
 namespace OutputEngine.Targets;
 
@@ -24,8 +26,8 @@ public abstract class CliOutput : TextWriter
 
     public override Encoding Encoding => OutputContext.Encoding;
     protected bool Redirecting { get; }
-    protected int Width { get;  }
-    protected int IndentSize { get;  }
+    protected int Width { get; }
+    protected int IndentSize { get; }
 
     private readonly StringBuilder buffer = new();
     public string GetBuffer() => buffer.ToString();
@@ -104,16 +106,21 @@ public abstract class CliOutput : TextWriter
         var output = CreateParagraphText(parts);
         var lines = output.Wrap(useWidth);
         var lastLine = lines.Last();
+        (string? open, string? close) = GetStyle(paragraph.Appearance);
+        if (!string.IsNullOrEmpty(open))
+        {
+            Write(open);
+        }
         foreach (var line in lines)
         {
             Write(useIndent + line);
-            //if (line != lastLine)
-            //{
-                WriteLine();
-            //}
+            WriteLine();
+        }
+        if (!string.IsNullOrEmpty(close))
+        {
+            Write(close);
         }
 
-  
     }
 
     protected static string CreateParagraphText(TextPart[] parts)
@@ -169,198 +176,19 @@ public abstract class CliOutput : TextWriter
     }
 
     public void Write(TextPart textPart, int indentCount = 0)
-        => Write(textPart.Text);
+    {
+        (string? open, string? close) = GetStyle(textPart.Appearance);
+        if (!string.IsNullOrEmpty(open))
+        {
+            Write(open);
+        }
+        Write(textPart.Text);
+        if (!string.IsNullOrEmpty(close))
+        {
+            Write(close);
+        }
+    }
 
-
-    //private void WriteLineHelpSectionHead(string? text) => Console.WriteLine(text + ":");
-
-
-
-
-    //private void WriteLineHelpPart<T>(HelpPart<T> helpPart)
-    //    where T : HelpItem
-    //{
-    //    if (!helpPart.Items.Any())
-    //    {
-    //        return 0;
-    //    }
-    //    WriteLineHelpSectionHead(helpPart.PartName);
-
-    //    var anyAliases = helpPart.SelectMany(x => x.Aliases).Any(x => !string.IsNullOrWhiteSpace(x));
-    //    Spectre.Console.Table helpPartTable = buildHelpPartTable(helpPart, anyAliases);
-    //    SetHelpPartTableCharacteristics(helpPartTable);
-    //    var panel = new Spectre.Console.Panel(helpPartTable);
-    //    // Patrik: Apparent bug in Spectre console. This causes the columns wrapping to be off
-    //    //panel.NoBorder().Padding(0, 0, 0, 0);
-    //    //AnsiConsole.WriteLine(panel);
-    //    AnsiConsole.WriteLine(helpPartTable);
-    //    Console.WriteLine());
-    //    return 0;
-
-    //    Spectre.Console.Table buildHelpPartTable<TItem>(HelpPart<TItem> helpPart, bool anyAliases)
-    //       where TItem : HelpItem
-    //    {
-    //        var helpPartTable = new Spectre.Console.Table().HideHeaders();
-    //        var nameColumn = new Spectre.Console.TableColumn("");
-    //        //.PadLeft(5).PadRight(2);
-    //        helpPartTable.AddColumn(nameColumn);
-    //        if (anyAliases)
-    //        {
-    //            helpPartTable.AddColumn("");
-    //        }
-    //        helpPartTable.AddColumn("");
-    //        foreach (var item in helpPart.Items)
-    //        {
-    //            helpPartTable.AddRow(helpRowForItem(item, anyAliases).ToArray());
-    //        }
-
-    //        return helpPartTable;
-    //    }
-
-    //    IEnumerable<string> helpRowForItem(HelpItem option, bool anyAliases)
-    //       => anyAliases
-    //           ? new List<string>
-    //               {
-    //                    "  " + option.DisplayName,
-    //                    string.Join(", ", option.Aliases),
-    //                    option.Description ?? "",
-    //               }
-    //           : new List<string>
-    //               {
-    //                    "  " + option.DisplayName,
-    //                    option.Description ?? "",
-    //               };
-
-    //}
-
-
-    //private void BuildTable(Spectre.Console.Table WriteLineTable, Table table)
-    //{
-    //    foreach (var column in table.Columns)
-    //    {
-    //        if (!column.Hide)
-    //        {
-    //            var WriteLineColumn = new Spectre.Console.TableColumn(column.Header)
-    //            {
-    //                NoWrap = true
-    //            };
-    //            WriteLineTable.AddColumn(WriteLineColumn);
-    //        }
-    //    }
-
-    //    foreach (var row in table.Rows)
-    //    {
-    //        var values = new List<Markup>();
-    //        for (int i = 0; i < table.Columns.Count; i++)
-    //        {
-    //            if (!table.Columns[i].Hide)
-    //            {
-    //                values.Add(new Markup(row[i], null).Overflow(Overflow.Ellipsis));
-    //            }
-    //        }
-
-    //        WriteLineTable.AddRow(new Spectre.Console.TableRow(values));
-    //    }
-    //}
-
-    //private void SetTableCharacteristics(Spectre.Console.Table WriteLineTable, int uxLevel)
-    //{
-    //    switch (uxLevel)
-    //    {
-    //        case 0: return;
-    //        case 1:
-    //            WriteLineTable.Border(TableBorder.None);
-    //            WriteLineTable.Expand();
-    //            return;
-    //        case 2:
-    //            WriteLineTable.Border(TableBorder.Minimal);
-    //            WriteLineTable.BorderColor(Color.Olive);
-    //            WriteLineTable.Expand();
-    //            return;
-    //        case 3:
-    //            WriteLineTable.Border(TableBorder.Horizontal);
-    //            WriteLineTable.BorderColor(Color.Green);
-    //            WriteLineTable.Expand();
-    //            return;
-    //        case 4:
-    //            WriteLineTable.Border(TableBorder.Rounded);
-    //            WriteLineTable.BorderColor(Color.Grey);
-    //            WriteLineTable.Collapse();
-    //            return;
-    //        case 5:
-    //            WriteLineTable.Border(TableBorder.Horizontal);
-    //            WriteLineTable.BorderColor(Color.Navy);
-    //            WriteLineTable.Collapse();
-    //            return;
-
-    //        default:
-    //            break;
-    //    }
-    //}
-
-    //private void SetHelpPartTableCharacteristics(Spectre.Console.Table helpPartTable)
-    //{
-    //    switch (uxLevel)
-    //    {
-    //        case 0: return;
-    //        case 1:
-    //            helpPartTable.Border(TableBorder.None);
-    //            helpPartTable.Expand();
-    //            return;
-    //        case 2:
-    //            helpPartTable.Border(TableBorder.None);
-    //            helpPartTable.Expand();
-    //            return;
-    //        case 3:
-    //            helpPartTable.Border(TableBorder.Horizontal);
-    //            helpPartTable.BorderColor(Color.Olive);
-    //            helpPartTable.Expand();
-    //            return;
-    //        case 4:
-    //            helpPartTable.Border(TableBorder.None);
-    //            helpPartTable.Collapse();
-    //            return;
-    //        case 5:
-    //            helpPartTable.Border(TableBorder.Horizontal);
-    //            helpPartTable.BorderColor(Color.Olive);
-    //            helpPartTable.Collapse();
-    //            return;
-
-    //        default:
-    //            break;
-    //    }
-    //}
-
-    //private void SetHelpUsageTableCharacteristics(Spectre.Console.Table helpUsageTable)
-    //{
-    //    switch (uxLevel)
-    //    {
-    //        case 0: return;
-    //        case 1:
-    //            helpUsageTable.Border(TableBorder.None);
-    //            helpUsageTable.Expand();
-    //            return;
-    //        case 2:
-    //            helpUsageTable.Border(TableBorder.None);
-    //            helpUsageTable.Expand();
-    //            return;
-    //        case 3:
-    //            helpUsageTable.Border(TableBorder.None);
-    //            helpUsageTable.Expand();
-    //            return;
-    //        case 4:
-    //            helpUsageTable.Border(TableBorder.None);
-    //            helpUsageTable.BorderColor(Color.Blue);
-    //            helpUsageTable.Collapse();
-    //            return;
-    //        case 5:
-    //            helpUsageTable.Border(TableBorder.None);
-    //            helpUsageTable.BorderColor(Color.Yellow);
-    //            helpUsageTable.Collapse();
-    //            return;
-
-    //        default:
-    //            break;
-    //    }
-    //}
+    protected (string? open, string? close) GetStyle(string? name)
+        => OutputContext.OutputStyles?.GetStyle(name) ?? (null, null);
 }

@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace OutputEngine.Targets;
 
-public abstract class MarkdownStyles : OutputStyles
+public class MarkdownStyles : OutputStyles
 {
     public MarkdownStyles()
     {
@@ -13,44 +13,48 @@ public abstract class MarkdownStyles : OutputStyles
         // TODO: Nested lists will also be a challenge.
         // TODO: Horizontal rules, definition list, code blocks and images may be a variation on Element
         // TODO: Links and footnotes may be a variation on TextPart
-        Styles = new Dictionary<string, (string? open, string? close)>
-        {
-            // Several items are inherited from OutputStyles
-            // Paragraph styles
-            ["NormalParagraph"] = (null, null),
-            ["Heading1"] = ("#", null),
-            ["Heading2"] = ("##", null),
-            ["Heading3"] = ("###", null),
-            ["Heading4"] = ("####", null),
-            ["Heading5"] = ("#####", null),
-            ["Heading6"] = ("######", null),
-            ["BlockQuote"] = (">", null),
-            ["BlockQuoteDoubled"] = (">>", null),
-            ["BlockQuoteTripled"] = (">>>", null),
-            ["NumberedItem"] = ("1", null),
-            ["TaskItemUnchecked"] = ("[ ]", null),
-            ["TaskItemChecked"] = ("[x]", null),
 
-            // TextPart styles
-            ["NormalText"] = (null, null),
-            ["LessImportant"] = (null, null),
-            ["Code"] = ("`", "`"),
-            ["Black"] = ("<span style = 'color: Black ;'>", "</span>"),
-            ["Red"] = ("<span style = 'color: Red ;'>", "</span>"),
-            ["Green"] = ("<span style = 'color: Green ;'>", "</span>"),
-            ["Yellow"] = ("<span style = 'color: Yellow ;'>", "</span>"),
-            ["Blue"] = ("<span style = 'color: Blue ;'>", "</span>"),
-            ["Magenta"] = ("<span style = 'color: Magenta ;'>", "</span>"),
-            ["Cyan"] = ("<span style = 'color: Cyan ;'>", "</span>"),
-            ["White"] = ("<span style = 'color: White ;'>", "</span>"),
-            ["Default"] = ("<span style = 'color: Default ;'>", "</span>"),
-            ["Italic"] = ("_", "_"),
-            ["Bold"] = ("**", "**"),
-            ["Strikethrough"] = ("~~", "~~"),
-            ["Subscript"] = ("~", "~"),
-            ["Superscript"] = ("^", "^"),
-            ["Highlight"] = ("==", "=="),
-        };
+        // Several items are inherited from OutputStyles
+        // Paragraph styles
+        AddStyle("NormalParagraph", null, null);
+        AddStyle("Heading1", "#", null);
+        AddStyle("Heading2", "##", null);
+        AddStyle("Heading3", "###", null);
+        AddStyle("Heading4", "####", null);
+        AddStyle("Heading5", "#####", null);
+        AddStyle("Heading6", "######", null);
+        AddStyle("BlockQuote", ">", null);
+        AddStyle("BlockQuoteDoubled", ">>", null);
+        AddStyle("BlockQuoteTripled", ">>>", null);
+        AddStyle("NumberedItem", "1", null);
+        AddStyle("TaskItemUnchecked", "[ ]", null);
+        AddStyle("TaskItemChecked", "[x]", null);
+        AddStyle("Important", "**", "**");
+        AddStyle("Error", "**<span style = 'color: Red ;'>", "</span>**");
+        AddStyle("Code", "'", "'");
+        AddStyle("BulletedItem", "-", null);
+
+
+        // TextPart styles
+        AddStyle("NormalText", null, null);
+        AddStyle("LessImportant", null, null);
+        AddStyle("Code", "`", "`");
+        AddStyle("Black", "<span style = 'color: Black ;'>", "</span>");
+        AddStyle("Red", "<span style = 'color: Red ;'>", "</span>");
+        AddStyle("Green", "<span style = 'color: Green ;'>", "</span>");
+        AddStyle("Yellow", "<span style = 'color: Yellow ;'>", "</span>");
+        AddStyle("Blue", "<span style = 'color: Blue ;'>", "</span>");
+        AddStyle("Magenta", "<span style = 'color: Magenta ;'>", "</span>");
+        AddStyle("Cyan", "<span style = 'color: Cyan ;'>", "</span>");
+        AddStyle("White", "<span style = 'color: White ;'>", "</span>");
+        AddStyle("Default", "<span style = 'color: Default ;'>", "</span>");
+        AddStyle("Italic", "_", "_");
+        AddStyle("Bold", "**", "**");
+        AddStyle("Strikethrough", "~~", "~~");
+        AddStyle("Subscript", "~", "~");
+        AddStyle("Superscript", "^", "^");
+        AddStyle("Highlight", "==", "==");
+
 
         DocumentOpen = """
                        <style>

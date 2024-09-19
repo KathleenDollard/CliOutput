@@ -10,6 +10,8 @@ public sealed class Table : Element
         Columns = columns;
     }
 
+    public bool IncludeHeaders { get; set; } = false;
+
     public IEnumerable<Paragraph?> GetHeaderRow()
     {
        foreach(var column in Columns)
