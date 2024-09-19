@@ -47,7 +47,7 @@ public class FixedWidthTable
                         ? []
                         : cell.PlainOutput(columnWidths[col]).ToArray());
                 var headerRows = LineupRow(wrappedHeader, columnWidths);
-                returnRows.AddRange(headerRows);
+                returnRows.Add(headerRows);
             }
 
             foreach (var row in table.TableData)
@@ -57,7 +57,7 @@ public class FixedWidthTable
                         ? []
                         : cell.PlainOutput(columnWidths[col]).ToArray());
                 var dataRow = LineupRow(wrappedRow, columnWidths);
-                returnRows.AddRange(dataRow);
+                returnRows.Add(dataRow);
             }
 
             return returnRows;
