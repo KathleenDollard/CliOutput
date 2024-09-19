@@ -19,7 +19,7 @@ public class HelpTestsHtml
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be("<h2>Description</h2><br/><p>&nbsp;&nbsp;World</p>");
+            .Be("<h2>Description</h2><p>&nbsp;&nbsp;World</p>");
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class HelpTestsHtml
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be("<h2>Usage</h2><br/><p>&nbsp;&nbsp;Hello</p>");
+            .Be("<h2>Usage</h2><p>&nbsp;&nbsp;Hello</p>");
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class HelpTestsHtml
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be("<h2>Usage</h2><br/><p>&nbsp;&nbsp;Hello [command]</p>");
+            .Be("<h2>Usage</h2><p>&nbsp;&nbsp;Hello [command]</p>");
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class HelpTestsHtml
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be("<h2>Usage</h2><br/><p>&nbsp;&nbsp;Hello Welcome Brrr</p>");
+            .Be("<h2>Usage</h2><p>&nbsp;&nbsp;Hello Welcome Brrr</p>");
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class HelpTestsHtml
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be("<h2>Usage</h2><br/><p>&nbsp;&nbsp;Hello <MORNING><EVENING></p>");
+            .Be("<h2>Usage</h2><p>&nbsp;&nbsp;Hello &lt;MORNING&gt;&lt;EVENING&gt;</p>");
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class HelpTestsHtml
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be("<h2>Usage</h2><br/><p>&nbsp;&nbsp;Hello [options]</p>");
+            .Be("<h2>Usage</h2><p>&nbsp;&nbsp;Hello [options]</p>");
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class HelpTestsHtml
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith("<h2>Arguments</h2><br/><table><tr><td>");
+            .StartWith("<h2>Arguments</h2><table><tr><td>Morning");
     }
 
     [Fact]
@@ -138,11 +138,12 @@ public class HelpTestsHtml
         var writer = new Html(new OutputContext(true));
 
         writer.Write(arguments);
+        writer.Write(arguments);
 
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith("<h2>Arguments</h2><br/><table><tr><td>");
+            .StartWith("<h2>Arguments</h2><table><tr><td>EarlyEvening");
     }
 
     [Fact]
@@ -160,7 +161,7 @@ public class HelpTestsHtml
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"<h2>Options</h2><br/><table><tr><td>");
+            .StartWith($"<h2>Options</h2><table><tr><td>Morning");
     }
 
     [Fact]
@@ -178,7 +179,7 @@ public class HelpTestsHtml
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"<h2>Subcommands</h2><br/><table><tr><td>");
+            .StartWith($"<h2>Subcommands</h2><table><tr><td>Morning");
     }
 
     [Fact]
@@ -199,6 +200,6 @@ public class HelpTestsHtml
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"<h2>Description</h2><br/>");
+            .StartWith($"<h2>Description</h2>");
     }
 }

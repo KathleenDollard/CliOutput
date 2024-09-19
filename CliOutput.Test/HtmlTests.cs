@@ -109,7 +109,7 @@ public class HtmlTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"<h2>Goodnight moon</h2><br/><p>&nbsp;&nbsp;Hello world</p><p>&nbsp;&nbsp;See you later</p>");
+            .Be($"<h2>Goodnight moon</h2><p>&nbsp;&nbsp;Hello world</p><p>&nbsp;&nbsp;See you later</p>");
     }
 
     [Fact]
@@ -138,11 +138,11 @@ public class HtmlTests
     [InlineData(ParagraphAppearance.Heading5, "<h5>Hello world</h5>")]
     [InlineData(ParagraphAppearance.Heading6, "<h6>Hello world</h6>")]
     [InlineData(ParagraphAppearance.BlockQuote, "<blockquote>Hello world</blockquote>")]
-    [InlineData(ParagraphAppearance.BlockQuoteDoubled, "<blockquote>Hello world</blockquote>")]
-    [InlineData(ParagraphAppearance.BlockQuoteTripled, "<blockquote>Hello world</blockquote>")]
-    //[InlineData(ParagraphAppearance.NumberedList, "<p>Hello world</p>")]
-    //[InlineData(ParagraphAppearance.BulletedList, "<p>Hello world</p>")]
-    //[InlineData(ParagraphAppearance.DefinitionList, "#Hello world")]
+    //[InlineData(ParagraphAppearance.BlockQuoteDoubled, "<blockquote><blockquote>Hello world</blockquote></blockquote>")]
+    //[InlineData(ParagraphAppearance.BlockQuoteTripled, "<blockquote><blockquote><blockquote>Hello world</blockquote></blockquote></blockquote>")]
+    [InlineData(ParagraphAppearance.NumberedList, "<ol><li>Hello world</li></ol>")]
+    [InlineData(ParagraphAppearance.BulletedList, "<ul><li>Hello world</li></ul>")]
+    //[InlineData(ParagraphAppearance.DefinitionList, "#Hello world")] This needs more complex structure
     //[InlineData(ParagraphAppearance.TaskItemUnchecked, "[ ] Hello world")]
     //[InlineData(ParagraphAppearance.TaskItemChecked, "[x] Hello world")]
     public void Outputs_Paragraph_with_style(string? appearance, string expected)
