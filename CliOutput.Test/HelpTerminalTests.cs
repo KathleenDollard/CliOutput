@@ -19,7 +19,7 @@ public class HelpTerminalTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Description:{Environment.NewLine}  World{Environment.NewLine}");
+            .Be($"Description:{Environment.NewLine}  World{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class HelpTerminalTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Usage:{Environment.NewLine}  Hello{Environment.NewLine}");
+            .Be($"Usage:{Environment.NewLine}  Hello{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class HelpTerminalTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Usage:{Environment.NewLine}  Hello [command]{Environment.NewLine}");
+            .Be($"Usage:{Environment.NewLine}  Hello [command]{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class HelpTerminalTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Usage:{Environment.NewLine}  Hello Welcome Brrr{Environment.NewLine}");
+            .Be($"Usage:{Environment.NewLine}  Hello Welcome Brrr{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class HelpTerminalTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Usage:{Environment.NewLine}  Hello <MORNING><EVENING>{Environment.NewLine}");
+            .Be($"Usage:{Environment.NewLine}  Hello <MORNING><EVENING>{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class HelpTerminalTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Usage:{Environment.NewLine}  Hello [options]{Environment.NewLine}");
+            .Be($"Usage:{Environment.NewLine}  Hello [options]{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public class HelpTerminalTests
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"Options:{Environment.NewLine}  ");
+            .StartWith($"Options:{Environment.NewLine}{Environment.NewLine}  ");
     }
 
     [Fact]
@@ -199,6 +199,6 @@ public class HelpTerminalTests
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"Description:{Environment.NewLine}  ");
+            .StartWith($"Description:{Environment.NewLine}{Environment.NewLine}  ");
     }
 }
