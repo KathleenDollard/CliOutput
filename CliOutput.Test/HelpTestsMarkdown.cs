@@ -19,7 +19,7 @@ public class HelpTestsMarkdown
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}##Description{Environment.NewLine}{Environment.NewLine}World");
+            .Be($"{Environment.NewLine}## Description{Environment.NewLine}{Environment.NewLine}World{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class HelpTestsMarkdown
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}##Usage{Environment.NewLine}{Environment.NewLine}Hello");
+            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class HelpTestsMarkdown
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}##Usage{Environment.NewLine}{Environment.NewLine}Hello [command]");
+            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello [command]{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class HelpTestsMarkdown
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}##Usage{Environment.NewLine}{Environment.NewLine}Hello Welcome Brrr");
+            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello Welcome Brrr{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class HelpTestsMarkdown
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}##Usage{Environment.NewLine}{Environment.NewLine}Hello <MORNING><EVENING>");
+            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello \\<MORNING\\>\\<EVENING\\>{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class HelpTestsMarkdown
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}##Usage{Environment.NewLine}{Environment.NewLine}Hello [options]");
+            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello [options]{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class HelpTestsMarkdown
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"{Environment.NewLine}##Arguments{Environment.NewLine}{Environment.NewLine}|||");
+            .StartWith($"{Environment.NewLine}## Arguments{Environment.NewLine}{Environment.NewLine}|||");
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class HelpTestsMarkdown
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"{Environment.NewLine}##Arguments{Environment.NewLine}{Environment.NewLine}|||");
+            .StartWith($"{Environment.NewLine}## Arguments{Environment.NewLine}{Environment.NewLine}|||");
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public class HelpTestsMarkdown
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"{Environment.NewLine}##Options{Environment.NewLine}{Environment.NewLine}|||");
+            .StartWith($"{Environment.NewLine}## Options{Environment.NewLine}{Environment.NewLine}|||");
     }
 
     [Fact]
@@ -178,7 +178,7 @@ public class HelpTestsMarkdown
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"{Environment.NewLine}##Subcommands{Environment.NewLine}{Environment.NewLine}|||");
+            .StartWith($"{Environment.NewLine}## Subcommands{Environment.NewLine}{Environment.NewLine}|||");
     }
 
     [Fact]
@@ -199,6 +199,6 @@ public class HelpTestsMarkdown
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"{Environment.NewLine}##Description{Environment.NewLine}{Environment.NewLine}");
+            .StartWith($"{Environment.NewLine}## Description{Environment.NewLine}{Environment.NewLine}");
     }
 }

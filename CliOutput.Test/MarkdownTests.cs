@@ -59,7 +59,7 @@ public class MarkdownTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be("Hello world{Environment.NewLine}{Environment.NewLine}");
+            .Be($"Hello world{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class MarkdownTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Hello world{Environment.NewLine}{Environment.NewLine}See you later");
+            .Be($"Hello world{Environment.NewLine}{Environment.NewLine}See you later{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -108,7 +108,7 @@ public class MarkdownTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}##Goodnight moon{Environment.NewLine}{Environment.NewLine}Hello world{Environment.NewLine}{Environment.NewLine}See you later");
+            .Be($"{Environment.NewLine}## Goodnight moon{Environment.NewLine}{Environment.NewLine}Hello world{Environment.NewLine}{Environment.NewLine}See you later{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -122,10 +122,11 @@ public class MarkdownTests
             ]);
         table.TableData.Add([new Paragraph("Alice"), new Paragraph("25")]);
         table.TableData.Add([new Paragraph("Bob"), new Paragraph("30")]);
+        table.IncludeHeaders = true;
         writer.Write(table);
         var result = writer.GetBuffer();
         result.Should()
-            .Be("|Name|Age|{Environment.NewLine}|---|---|{Environment.NewLine}|Alice|25|{Environment.NewLine}|Bob|30|{Environment.NewLine}");
+            .Be($"|Name|Age|{Environment.NewLine}|---|---|{Environment.NewLine}|Alice|25|{Environment.NewLine}|Bob|30|{Environment.NewLine}");
     }
 
     [Theory]
