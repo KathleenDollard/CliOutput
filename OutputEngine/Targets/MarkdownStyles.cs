@@ -70,6 +70,11 @@ public class MarkdownStyles : OutputStyles
                        """;
         DocumentClose = string.Empty;
     }
+
+    protected override (string? open, string? close) Important => ("**", "**");
+    protected override (string? open, string? close) InlineCode => ("`", "`");
+    protected override (string? open, string? close) Error => ("**<span style = 'color: Red ;'>", "</span>**");
+    protected override (string? open, string? close) Warning => ("**<span style = 'color: Yellow ;'>", "</span>**");
 }
 
 // Reference: 

@@ -51,6 +51,7 @@ var renderer = args.LastOrDefault() switch
 {
     "markdown" => (OutputEngine.Targets.CliOutput)new Markdown(outputContext),
     "html" => new Html(outputContext),
+    "richold" => new RichTerminalOld(outputContext),
     "rich" => new RichTerminal(outputContext),
     _ => new Terminal(outputContext)
 };

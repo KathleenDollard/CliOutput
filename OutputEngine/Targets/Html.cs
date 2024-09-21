@@ -73,8 +73,10 @@ public class Html : CliOutput
     private static (string tag, string style, string? parentTag) ParseParagraphAppearanceToTags(Paragraph paragraph) =>
         paragraph.Appearance switch
         {
-            ParagraphAppearance.Warning => ("p", "style=\"color:orange;\"", null),
-            ParagraphAppearance.Error => ("p", "style=\"color:red;\"", null),
+
+            Appearance.Warning => ("p", "style=\"color:orange;\"", null),
+            Appearance.Error => ("p", "style=\"color:red;\"", null),
+            /*
             ParagraphAppearance.Heading1 => ("h1", string.Empty, null),
             ParagraphAppearance.Heading2 => ("h2", string.Empty, null),
             ParagraphAppearance.Heading3 => ("h3", string.Empty, null),
@@ -84,6 +86,7 @@ public class Html : CliOutput
             ParagraphAppearance.BlockQuote => ("blockquote", string.Empty, null),
             ParagraphAppearance.NumberedList => ("li", string.Empty, "ol"),
             ParagraphAppearance.BulletedList => ("li", string.Empty, "ul"),
+            */
             _ => ("p", string.Empty, null), // might want to use <div> instead of <p>
         };
 

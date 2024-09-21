@@ -4,22 +4,13 @@
 /// Standard text appearances for <see cref="Paragraph"/>, inspired by markdown - 
 /// few will have meaning in plain text.
 /// </summary>
-public static class ParagraphAppearance
+public static class Appearance
 {
     public const string Normal = "NormalParagraph";
     public const string Warning = "Warning";
     public const string Error = "Error";
     public const string CodeBlock = "CodeBlock";
     public const string SectionTitle = "SectionTitle";
-}
-
-/// <summary>
-/// Standard text appearances for <see cref="TextPart"/>, inspired by markdown - 
-/// few will have meaning in plain text.
-/// </summary>
-public static class TextPartAppearance
-{
-    public const string Normal = "NormalText";
     public const string LessImportant = "LessImportant";
     public const string Important = "Important";
     public const string InlineCode = "InlineCode";

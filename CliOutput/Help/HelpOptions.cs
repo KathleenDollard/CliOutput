@@ -19,7 +19,7 @@ public class HelpOptions : HelpSection
         static string AliasesAndName(CliOption option)
         {
             var aliases = option.Aliases is not null && option.Aliases.Any()
-                ? string.Concat(option.Aliases.Select(a=>$"{a} , "))
+                ? string.Concat(option.Aliases.Select(a=>$"{a}, "))
                 : string.Empty;
            
             return $"{aliases}{option.Name}";

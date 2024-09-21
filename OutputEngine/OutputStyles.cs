@@ -2,7 +2,7 @@
 
 namespace OutputEngine;
 
-public class OutputStyles
+public abstract class OutputStyles
 {
     protected Dictionary<string, (string? open, string? close)> Styles
     { get; set; } = new();
@@ -13,14 +13,21 @@ public class OutputStyles
         AddStyle("Important", Important);
         AddStyle("SectionTitle", SectionTitle);
         AddStyle("InlineCode", InlineCode);
-        AddStyle("AngleBrackets", ("<", ">"));
-        AddStyle("SquareBrackets", ("[", "]"));
-        AddStyle("SquareAndAngleBrackets", ("[<", ">]"));
+        AddStyle("AngleBrackets", AngleBrackets);
+        AddStyle("SquareBrackets", SquareBrackets);
+        AddStyle("SquareAndAngleBrackets", SquareAndAngleBrackets);
+        AddStyle("Error", Error);
+        AddStyle("Warning", Warning);
     }
 
-    protected virtual (string? open, string? close) Important => (null, null);
+    protected abstract (string? open, string? close) InlineCode { get; }
+    protected abstract (string? open, string? close) Important { get; }
+    protected abstract (string? open, string? close) Error { get; }
+    protected abstract (string? open, string? close) Warning { get; }
     protected virtual (string? open, string? close) SectionTitle => (null, ":");
-    protected virtual (string? open, string? close) InlineCode => (null, null);
+    protected virtual (string? open, string? close) AngleBrackets => ("<", ">");
+    protected virtual (string? open, string? close) SquareBrackets => ("[", "]");
+    protected virtual (string? open, string? close) SquareAndAngleBrackets => ("[<", ">]");
 
     protected void AddStyle(string name, (string?, string?) style)
     {

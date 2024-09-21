@@ -19,7 +19,7 @@ public abstract class CliOutput : TextWriter
         OutputContext = outputContext;
         Width = outputContext.Width;
         IndentSize = outputContext.IndentSize;
-        OutputStyles = outputContext.OutputStyles ?? new OutputStyles(); ;
+        OutputStyles = outputContext.OutputStyles ?? new TerminalStyles();
     }
     public OutputContext OutputContext { get; }
 
@@ -33,7 +33,7 @@ public abstract class CliOutput : TextWriter
     public string GetBuffer() => buffer.ToString();
     public void ClearBuffer() => buffer.Clear();
 
-    public void WriteLine<T>(T? output)
+    public virtual void WriteLine<T>(T? output)
     {
         if (output is not null)
         {
@@ -49,6 +49,7 @@ public abstract class CliOutput : TextWriter
         Write(Environment.NewLine);
     }
 
+
     public override void Write(string? text)
     {
         if (Redirecting)
@@ -60,7 +61,6 @@ public abstract class CliOutput : TextWriter
             Console.Write(text);
         }
     }
-
     public void Write(Layout layout, int indentCount = 0)
     {
         foreach (var section in layout.Sections)
@@ -72,7 +72,7 @@ public abstract class CliOutput : TextWriter
     public virtual void Write(Section section, int indentCount = 0)
     {
         Write(section.Title);
-        WriteLine(":");
+        WriteLine();
         Write((Group)section, 1);
     }
 
@@ -106,7 +106,7 @@ public abstract class CliOutput : TextWriter
         var output = CreateParagraphText(parts);
         var lines = output.Wrap(useWidth);
         var lastLine = lines.Last();
-        (string? open, string? close) = GetStyle(paragraph.Appearance);
+        (string? open, string? close) = OutputStyles?.GetStyle(paragraph.Appearance) ?? (null,null);
         if (!string.IsNullOrEmpty(open))
         {
             Write(open);
@@ -175,9 +175,9 @@ public abstract class CliOutput : TextWriter
         }
     }
 
-    public void Write(TextPart textPart, int indentCount = 0)
+    public virtual void Write(TextPart textPart, int indentCount = 0)
     {
-        (string? open, string? close) = GetStyle(textPart.Appearance);
+        (string? open, string? close) = OutputStyles?.GetStyle(textPart.Appearance) ?? (null, null);
         if (!string.IsNullOrEmpty(open))
         {
             Write(open);
@@ -189,6 +189,4 @@ public abstract class CliOutput : TextWriter
         }
     }
 
-    protected (string? open, string? close) GetStyle(string? name)
-        => OutputContext.OutputStyles?.GetStyle(name) ?? (null, null);
 }

@@ -108,7 +108,7 @@ public class TerminalTests
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Greeting:{Environment.NewLine}Hello world{Environment.NewLine}See you later{Environment.NewLine}");
+            .Be($"Greeting:{Environment.NewLine}  Hello world{Environment.NewLine}  See you later{Environment.NewLine}{Environment.NewLine}");
     }
 
 
