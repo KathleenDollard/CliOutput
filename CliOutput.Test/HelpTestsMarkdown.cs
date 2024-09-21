@@ -89,7 +89,7 @@ public class HelpTestsMarkdown
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello \\<MORNING\\>\\<EVENING\\>{Environment.NewLine}{Environment.NewLine}");
+            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello \\<MORNING\\> \\<EVENING\\>{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
