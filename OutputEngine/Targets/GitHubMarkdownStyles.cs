@@ -10,11 +10,8 @@ public abstract class GitHubMarkdownStyles : MarkdownStyles
         // TODO: Nested lists will also be a challenge.
         // TODO: Horizontal rules may be a variation on Element
         // TODO: Link, footnotes, code, and images may be a variation on TextPart
-        Styles = new Dictionary<string, (string? open, string? close)>
-        {
-            ["Subscript"] = (null, null),
-            ["Superscript"] = (null, null),
-            ["Highlight"] = (null, null),
-        };
+        AddStyle("Subscript",null, null);
+        AddStyle("Superscript",null, null);
+        AddStyle("Highlight", null, null);
     }
 }

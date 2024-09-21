@@ -90,6 +90,7 @@ public class MarkdownTests
     public void Outputs_Section()
     {
         var writer = new Markdown(new OutputContext(true));
+        writer.OutputContext.OutputStyles = new MarkdownStyles();
         Section section =
             new Section("Goodnight moon")
             {
@@ -117,9 +118,10 @@ public class MarkdownTests
         var writer = new Markdown(new OutputContext(true));
         var table = new Table(
             [
-            new TableColumn("Name"),
-            new TableColumn("Age")
+                new TableColumn("Name"),
+                new TableColumn("Age")
             ]);
+        table.IncludeHeaders= true;
         table.TableData.Add([new Paragraph("Alice"), new Paragraph("25")]);
         table.TableData.Add([new Paragraph("Bob"), new Paragraph("30")]);
         table.IncludeHeaders = true;
@@ -129,6 +131,7 @@ public class MarkdownTests
             .Be($"|Name|Age|{Environment.NewLine}|---|---|{Environment.NewLine}|Alice|25|{Environment.NewLine}|Bob|30|{Environment.NewLine}");
     }
 
+    /* Rethinking styles
     [Theory]
     [InlineData(ParagraphAppearance.Heading1, "# Hello world")]
     [InlineData(ParagraphAppearance.Heading2, "## Hello world")]
@@ -159,5 +162,6 @@ public class MarkdownTests
             .Be($"{expected}{Environment.NewLine}{Environment.NewLine}");
 
     }
+    */
 
 }

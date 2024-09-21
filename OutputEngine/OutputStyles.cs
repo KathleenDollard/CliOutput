@@ -1,15 +1,51 @@
-﻿namespace OutputEngine;
+﻿using System.Security;
+
+namespace OutputEngine;
 
 public abstract class OutputStyles
 {
     protected Dictionary<string, (string? open, string? close)> Styles
-    { get; set; } = new()
+    { get; set; } = new();
+
+
+    public OutputStyles()
     {
-        ["Important"] = ("[Bold]", "[Bold]"),
-        ["Error"] = ("[Important][Red]", "[Important][Red]"),
-        ["Code"] = ("'", "'"),
-        ["BulletedItem"] = ("-", null),
-    };
+        AddStyle("Important", Important);
+        AddStyle("SectionTitle", SectionTitle);
+        AddStyle("InlineCode", InlineCode);
+        AddStyle("AngleBrackets", AngleBrackets);
+        AddStyle("SquareBrackets", SquareBrackets);
+        AddStyle("SquareAndAngleBrackets", SquareAndAngleBrackets);
+        AddStyle("Error", Error);
+        AddStyle("Warning", Warning);
+    }
+
+    protected abstract (string? open, string? close) InlineCode { get; }
+    protected abstract (string? open, string? close) Important { get; }
+    protected abstract (string? open, string? close) Error { get; }
+    protected abstract (string? open, string? close) Warning { get; }
+    protected virtual (string? open, string? close) SectionTitle => (null, ":");
+    protected virtual (string? open, string? close) AngleBrackets => ("<", ">");
+    protected virtual (string? open, string? close) SquareBrackets => ("[", "]");
+    protected virtual (string? open, string? close) SquareAndAngleBrackets => ("[<", ">]");
+
+    protected void AddStyle(string name, (string?, string?) style)
+    {
+        Styles[name] = style;
+    }
+
+    protected void AddStyle(string name, string? open, string? close)
+    {
+        Styles[name] = (open, close);
+    }
+
+    public (string? open, string? close) GetStyle(string? name)
+        => name is null
+            ? (null, null)
+            : Styles.TryGetValue(name, out var codes)
+                ? (codes.open, codes.close)
+                : (null, null);
+
     protected string DocumentOpen { get; set; } = string.Empty;
     protected string DocumentClose { get; set; } = string.Empty;
 }

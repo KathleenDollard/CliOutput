@@ -66,9 +66,9 @@ public class TerminalTests
     public void Outputs_Group()
     {
         var writer = new Terminal(new OutputContext(true));
-        Group textGroup = 
+        Group textGroup =
             [
-                new Paragraph() 
+                new Paragraph()
                 {
                     new TextPart("Hello"),
                     new TextPart("world")
@@ -84,6 +84,31 @@ public class TerminalTests
         var result = writer.GetBuffer();
         result.Should()
             .Be($"Hello world{Environment.NewLine}See you later{Environment.NewLine}");
+    }
+
+
+    [Fact]
+    public void Outputs_Section()
+    {
+        var writer = new Terminal(new OutputContext(true));
+        Section section = new Section("Greeting")
+        {
+            new Paragraph()
+            {
+                new TextPart("Hello"),
+                new TextPart("world")
+            },
+            new Paragraph()
+            {
+                new TextPart($"See you later"),
+            }
+        };
+
+        writer.Write(section);
+
+        var result = writer.GetBuffer();
+        result.Should()
+            .Be($"Greeting:{Environment.NewLine}  Hello world{Environment.NewLine}  See you later{Environment.NewLine}{Environment.NewLine}");
     }
 
 

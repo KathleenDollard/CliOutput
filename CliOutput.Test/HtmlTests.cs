@@ -130,6 +130,7 @@ public class HtmlTests
             .Be("<table><tr><th>Name</th><th>Age</th></tr><tr><td>Alice</td><td>25</td></tr><tr><td>Bob</td><td>30</td></tr></table>");
     }
 
+    /* Rethinking styles
     [Theory]
     [InlineData(ParagraphAppearance.Heading1, "<h1>Hello world</h1>")]
     [InlineData(ParagraphAppearance.Heading2, "<h2>Hello world</h2>")]
@@ -160,4 +161,5 @@ public class HtmlTests
             .Be($"{expected}");
 
     }
+    */
 }

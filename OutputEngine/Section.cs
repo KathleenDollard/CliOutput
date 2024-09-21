@@ -8,7 +8,7 @@ public class Section : Group
 
     public Section(string title)
     {
-        Title = new TextPart(title, TextPartAppearance.Important);
+        Title = new TextPart(title, Appearance.SectionTitle);
     }
 
     //public void WriteSectionHead(Section section)

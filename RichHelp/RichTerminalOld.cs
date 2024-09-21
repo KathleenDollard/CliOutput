@@ -3,9 +3,9 @@ using Spectre.Console;
 
 namespace OutputEngine.Targets;
 
-public class RichTerminal : Terminal
+public class RichTerminalOld : Terminal
 {
-    public RichTerminal(OutputContext outputContext)
+    public RichTerminalOld(OutputContext outputContext)
         : base(outputContext)
     {  }
 
@@ -51,8 +51,8 @@ public class RichTerminal : Terminal
         // to ensure colors work for different environments
         var style = paragraph.Appearance switch
         {
-            ParagraphAppearance.Error => new Style(foreground: Spectre.Console.Color.Red, background: Spectre.Console.Color.Black, decoration: Decoration.Bold),
-            ParagraphAppearance.Warning => new Style(foreground: Spectre.Console.Color.Yellow, background: Spectre.Console.Color.Black, decoration: Decoration.Bold),
+            Appearance.Error => new Style(foreground: Spectre.Console.Color.Red, background: Spectre.Console.Color.Black, decoration: Decoration.Bold),
+            Appearance.Warning => new Style(foreground: Spectre.Console.Color.Yellow, background: Spectre.Console.Color.Black, decoration: Decoration.Bold),
             _ => new Style(decoration: Decoration.None),
         };
 

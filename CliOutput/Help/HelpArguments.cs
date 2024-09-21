@@ -1,23 +1,24 @@
 ﻿using OutputEngine.Primitives;
+using System.Globalization;
 
 namespace CliOutput.Help;
 
 public class HelpArguments : HelpSection
 {
-    public HelpArguments(CliCommand command) : base("Arguments",command)
+    public HelpArguments(CliCommand command) : base("Arguments", command)
     {
         var table = GetTable();
         foreach (var arg in Command.Arguments)
         {
-            table.AddRow([arg.Name, arg.Description ?? string.Empty]);
+            table.AddRow([$"<{arg.Name.ToUpper(CultureInfo.InvariantCulture)}>", arg.Description ?? string.Empty]);
         }
-        Add( table);
+        Add(table);
     }
 
     private Table GetTable()
     {
         TableColumn[] columns = [
-            new("Name", TableColumnKind.Mandatory),
+            new("Name", TableColumnKind.Mandatory,minWidth: 25),
             new("Description", TableColumnKind.Mandatory)
         ];
         var table = new Table(columns);

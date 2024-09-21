@@ -13,7 +13,7 @@ public class HelpTerminalTests
         var command = new CliCommand("Hello", "World");
         var help = HelpLayout.Create(command);
         var description = help.Sections.OfType<HelpDescription>().First();
-        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
+        var writer = new Terminal(new OutputContext(true));
 
         writer.Write(description);
 
@@ -28,7 +28,7 @@ public class HelpTerminalTests
         var command = new CliCommand("Hello", "World");
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
+        var writer = new Terminal(new OutputContext(true));
 
         writer.Write(usage);
 
@@ -47,7 +47,7 @@ public class HelpTerminalTests
         command.AddSubCommand(subcommand2);
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
+        var writer = new Terminal(new OutputContext(true));
 
         writer.Write(usage);
 
@@ -66,7 +66,7 @@ public class HelpTerminalTests
         subcommand1.AddSubCommand(subcommand2);
         var help = HelpLayout.Create(subcommand2);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
+        var writer = new Terminal(new OutputContext(true));
 
         writer.Write(usage);
 
@@ -83,13 +83,13 @@ public class HelpTerminalTests
         command.Arguments.Add(new CliArgument("Evening", "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
+        var writer = new Terminal(new OutputContext(true));
 
         writer.Write(usage);
 
         var result = writer.GetBuffer();
         result.Should()
-            .Be($"Usage:{Environment.NewLine}  Hello <MORNING><EVENING>{Environment.NewLine}{Environment.NewLine}");
+            .Be($"Usage:{Environment.NewLine}  Hello <MORNING> <EVENING>{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -100,13 +100,33 @@ public class HelpTerminalTests
         command.Options.Add(new CliOption("Evening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
+        var writer = new Terminal(new OutputContext(true));
 
         writer.Write(usage);
 
         var result = writer.GetBuffer();
         result.Should()
             .Be($"Usage:{Environment.NewLine}  Hello [options]{Environment.NewLine}{Environment.NewLine}");
+    }
+
+
+    [Fact]
+    public void Outputs_usage_with_arguments_options_and_subcommands()
+    {
+        var command = new CliCommand("build", description: ".NET Builder");
+        command.Arguments.Add(new CliArgument("project", description: "The project or solution file to operate on. If a file is not specified, the command will search the current directory for one."));
+        command.Options.Add(new CliOption("-c", description: "The configuration to use for building the project. The default for most projects is 'Debug'."));
+        command.Options.Add(new CliOption("-f", description: "The target framework to build for. The target framework must also be specified in the project file."));
+        command.Options.Add(new CliOption("-r", description: "The target runtime to build for."));
+        var help = HelpLayout.Create(command);
+        var usage = help.Sections.OfType<HelpUsage>().First();
+        var writer = new Terminal(new OutputContext(true));
+
+        writer.Write(usage);
+
+        var result = writer.GetBuffer();
+        result.Should()
+            .Be($"Usage:{Environment.NewLine}  build <PROJECT> [options]{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -117,14 +137,14 @@ public class HelpTerminalTests
         command.Arguments.Add(new CliArgument("VerEarlyEvening", "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpArguments>().First();
-        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
+        var writer = new Terminal(new OutputContext(true));
 
         writer.Write(arguments);
 
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"Arguments:{Environment.NewLine}  ");
+            .StartWith($"Arguments:{Environment.NewLine}  <MORNING> ");
     }
 
     [Fact]
@@ -135,7 +155,7 @@ public class HelpTerminalTests
         command.Arguments.Add(new CliArgument("Morning", "It is the morning."));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpArguments>().First();
-        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
+        var writer = new Terminal(new OutputContext(true));
 
         writer.Write(arguments);
 
@@ -152,15 +172,15 @@ public class HelpTerminalTests
         command.Options.Add(new CliOption("Morning", description: "It is the morning."));
         command.Options.Add(new CliOption("VerEarlyEvening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
-        var arguments = help.Sections.OfType<HelpOptions>().First();
-        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
+        var options = help.Sections.OfType<HelpOptions>().First();
+        var writer = new Terminal(new OutputContext(true));
 
-        writer.Write(arguments);
+        writer.Write(options);
 
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"Options:{Environment.NewLine}{Environment.NewLine}  ");
+            .StartWith($"Options:{Environment.NewLine}  Morning");
     }
 
     [Fact]
@@ -171,7 +191,7 @@ public class HelpTerminalTests
         command.AddSubCommand(new CliCommand("VerEarlyEvening", "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpSubcommands>().First();
-        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
+        var writer = new Terminal(new OutputContext(true));
 
         writer.Write(arguments);
 
@@ -192,13 +212,13 @@ public class HelpTerminalTests
         command.AddSubCommand(new CliCommand("One", description: "The first subcommand."));
         command.AddSubCommand(new CliCommand("Two", description: "The second subcommand"));
         var help = HelpLayout.Create(command);
-        var writer = new OutputEngine.Targets.Terminal(new OutputContext(true));
+        var writer = new Terminal(new OutputContext(true));
 
         writer.Write(help);
 
         var result = writer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"Description:{Environment.NewLine}{Environment.NewLine}  ");
+            .StartWith($"Description:{Environment.NewLine}  ");
     }
 }
