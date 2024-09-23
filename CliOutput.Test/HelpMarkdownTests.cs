@@ -1,11 +1,11 @@
 using FluentAssertions;
 using CliOutput.Help;
-using OutputEngine.Targets;
+using OutputEngine.Renderers;
 using OutputEngine;
 
 namespace CliOutput.Test;
 
-public class HelpTestsMarkdown
+public class HelpMarkdownTests
 {
     [Fact]
     public void Outputs_description()
@@ -13,13 +13,13 @@ public class HelpTestsMarkdown
         var command = new CliCommand("Hello", description: "World");
         var help = HelpLayout.Create(command);
         var description = help.Sections.OfType<HelpDescription>().First();
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write(description);
+        renderer.RenderSection(description);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}## Description{Environment.NewLine}{Environment.NewLine}World{Environment.NewLine}{Environment.NewLine}");
+            .Be($"## Description{Environment.NewLine}{Environment.NewLine}World{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -28,13 +28,13 @@ public class HelpTestsMarkdown
         var command = new CliCommand("Hello", description: "World");
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write(usage);
+        renderer.RenderSection(usage);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello{Environment.NewLine}{Environment.NewLine}");
+            .Be($"## Usage{Environment.NewLine}{Environment.NewLine}Hello{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -47,13 +47,13 @@ public class HelpTestsMarkdown
         command.AddSubCommand(subcommand2);
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write(usage);
+        renderer.RenderSection(usage);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello [command]{Environment.NewLine}{Environment.NewLine}");
+            .Be($"## Usage{Environment.NewLine}{Environment.NewLine}Hello [command]{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -66,13 +66,13 @@ public class HelpTestsMarkdown
         subcommand1.AddSubCommand(subcommand2);
         var help = HelpLayout.Create(subcommand2);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write(usage);
+        renderer.RenderSection(usage);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello Welcome Brrr{Environment.NewLine}{Environment.NewLine}");
+            .Be($"## Usage{Environment.NewLine}{Environment.NewLine}Hello Welcome Brrr{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -83,13 +83,13 @@ public class HelpTestsMarkdown
         command.Arguments.Add(new CliArgument("Evening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write(usage);
+        renderer.RenderSection(usage);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello \\<MORNING\\> \\<EVENING\\>{Environment.NewLine}{Environment.NewLine}");
+            .Be($"## Usage{Environment.NewLine}{Environment.NewLine}Hello \\<MORNING\\> \\<EVENING\\>{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -100,13 +100,13 @@ public class HelpTestsMarkdown
         command.Options.Add(new CliOption("Evening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write(usage);
+        renderer.RenderSection(usage);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}## Usage{Environment.NewLine}{Environment.NewLine}Hello [options]{Environment.NewLine}{Environment.NewLine}");
+            .Be($"## Usage{Environment.NewLine}{Environment.NewLine}Hello [options]{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
@@ -117,32 +117,32 @@ public class HelpTestsMarkdown
         command.Arguments.Add(new CliArgument("VerEarlyEvening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpArguments>().First();
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write(arguments);
+        renderer.RenderSection(arguments);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"{Environment.NewLine}## Arguments{Environment.NewLine}{Environment.NewLine}|||");
+            .StartWith($"## Arguments{Environment.NewLine}{Environment.NewLine}|||");
     }
 
     [Fact]
-    public void Outputs_arguments_with_long_descrption()
+    public void Outputs_arguments_with_long_description()
     {
         var command = new CliCommand("Hello", description: "World");
         command.Arguments.Add(new CliArgument("EarlyEvening", description: "Now, it is the evening, with a very, very, very, very, very,  very, very,  very, very,  very, very,  very, very,  very, very,  very, very,  very, very,  very, very, long description"));
         command.Arguments.Add(new CliArgument("Morning", description: "It is the morning."));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpArguments>().First();
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write(arguments);
+        renderer.RenderSection(arguments);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"{Environment.NewLine}## Arguments{Environment.NewLine}{Environment.NewLine}|||");
+            .StartWith($"## Arguments{Environment.NewLine}{Environment.NewLine}|||");
     }
 
     [Fact]
@@ -153,14 +153,14 @@ public class HelpTestsMarkdown
         command.Options.Add(new CliOption("VerEarlyEvening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpOptions>().First();
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write(arguments);
+        renderer.RenderSection(arguments);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"{Environment.NewLine}## Options{Environment.NewLine}{Environment.NewLine}|||");
+            .StartWith($"## Options{Environment.NewLine}{Environment.NewLine}|||");
     }
 
     [Fact]
@@ -171,14 +171,14 @@ public class HelpTestsMarkdown
         command.AddSubCommand(new CliCommand("VerEarlyEvening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpSubcommands>().First();
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write(arguments);
+        renderer.RenderSection(arguments);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"{Environment.NewLine}## Subcommands{Environment.NewLine}{Environment.NewLine}|||");
+            .StartWith($"## Subcommands{Environment.NewLine}{Environment.NewLine}|||");
     }
 
     [Fact]
@@ -192,13 +192,13 @@ public class HelpTestsMarkdown
         command.AddSubCommand(new CliCommand("One", description: "The first subcommand."));
         command.AddSubCommand(new CliCommand("Two", description: "The second subcommand"));
         var help = HelpLayout.Create(command);
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write(help);
+        renderer.RenderLayout(help);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
-            .StartWith($"{Environment.NewLine}## Description{Environment.NewLine}{Environment.NewLine}");
+            .StartWith($"## Description{Environment.NewLine}{Environment.NewLine}");
     }
 }

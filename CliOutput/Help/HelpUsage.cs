@@ -1,4 +1,5 @@
-﻿using OutputEngine.Primitives;
+﻿using OutputEngine;
+using OutputEngine.Primitives;
 
 namespace CliOutput.Help;
 

@@ -1,5 +1,5 @@
 using FluentAssertions;
-using OutputEngine.Targets;
+using OutputEngine.Renderers;
 using OutputEngine.Primitives;
 using OutputEngine;
 
@@ -10,11 +10,11 @@ public class TerminalTests
     [Fact]
     public void Outputs_string()
     {
-        var writer = new Terminal(new OutputContext(true));
+        var renderer = new TerminalRenderer(new OutputContext(true));
 
-        writer.Write("Hello world");
+        renderer.Render("Hello world");
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("Hello world");
     }
@@ -22,11 +22,11 @@ public class TerminalTests
     [Fact]
     public void Outputs_string_with_newline()
     {
-        var writer = new Terminal(new OutputContext(true));
+        var renderer = new TerminalRenderer(new OutputContext(true));
 
-        writer.WriteLine("Hello world");
+        renderer.RenderLine("Hello world");
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"Hello world{Environment.NewLine}");
     }
@@ -34,12 +34,12 @@ public class TerminalTests
     [Fact]
     public void Outputs_TextPart()
     {
-        var writer = new Terminal(new OutputContext(true));
+        var renderer = new TerminalRenderer(new OutputContext(true));
         var textPart = new TextPart("Hello world");
 
-        writer.Write(textPart);
+        renderer.RenderTextPart(textPart);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("Hello world");
     }
@@ -47,7 +47,7 @@ public class TerminalTests
     [Fact]
     public void Outputs_Paragraph()
     {
-        var writer = new Terminal(new OutputContext(true));
+        var renderer = new TerminalRenderer(new OutputContext(true));
         var paragraph =
                 new Paragraph()
                 {
@@ -55,9 +55,9 @@ public class TerminalTests
                     new TextPart("world")
                 };
 
-        writer.Write(paragraph);
+        renderer.RenderParagraph(paragraph);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"Hello world{Environment.NewLine}");
     }
@@ -65,7 +65,7 @@ public class TerminalTests
     [Fact]
     public void Outputs_Group()
     {
-        var writer = new Terminal(new OutputContext(true));
+        var renderer = new TerminalRenderer(new OutputContext(true));
         Group textGroup =
             [
                 new Paragraph()
@@ -79,9 +79,9 @@ public class TerminalTests
                 }
             ];
 
-        writer.Write(textGroup);
+        renderer.RenderGroup(textGroup);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"Hello world{Environment.NewLine}See you later{Environment.NewLine}");
     }
@@ -90,8 +90,8 @@ public class TerminalTests
     [Fact]
     public void Outputs_Section()
     {
-        var writer = new Terminal(new OutputContext(true));
-        Section section = new Section("Greeting")
+        var renderer = new TerminalRenderer(new OutputContext(true));
+        Section section = new("Greeting")
         {
             new Paragraph()
             {
@@ -104,9 +104,9 @@ public class TerminalTests
             }
         };
 
-        writer.Write(section);
+        renderer.RenderSection(section);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"Greeting:{Environment.NewLine}  Hello world{Environment.NewLine}  See you later{Environment.NewLine}{Environment.NewLine}");
     }
@@ -115,7 +115,7 @@ public class TerminalTests
     [Fact]
     public void Extra_newline_preserved_in_paragraph()
     {
-        var writer = new Terminal(new OutputContext(true));
+        var renderer = new TerminalRenderer(new OutputContext(true));
         Group textGroup =
             [
                 new Paragraph()
@@ -129,9 +129,9 @@ public class TerminalTests
                 }
             ];
 
-        writer.Write(textGroup);
+        renderer.RenderGroup(textGroup);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"Hello world{Environment.NewLine}See you later{Environment.NewLine}{Environment.NewLine}");
     }

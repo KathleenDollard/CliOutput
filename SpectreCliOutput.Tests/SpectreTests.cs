@@ -1,78 +1,43 @@
-using FluentAssertions;
-using OutputEngine.Targets;
+﻿using FluentAssertions;
 using OutputEngine.Primitives;
 using OutputEngine;
 using Spectre.Console.Testing;
 using Spectre.Console;
+using SpectreCliOutput;
+using OutputEngine.Renderers;
 
-namespace CliOutput.Test;
+namespace RichOutputTests;
 
-public class RichTerminalTests
+public class SpectreTests
 {
-    public string Expected { get; private set; }
 
-    private TestConsole GetTestConsole()
-        => new TestConsole()
-                .Colors(ColorSystem.Standard)
-                .EmitAnsiSequences();
-    private static RichTerminal GetWriter(TestConsole testConsole)
-        => new RichTerminal(new OutputContext(true), testConsole, true);
+    private static SpectreRenderer GetRenderer()
+        => new SpectreRenderer(new OutputContext(true));
 
     [Theory]
     [InlineData("Hello World", "Hello World")]
+    [InlineData("[bold]Hello world[/]", "\u001b[1mHello world\u001b[0m")]
     public void Outputs_string(string text, string expected)
     {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
+        var renderer = GetRenderer();
 
-        writer.Write(text);
+        renderer.Render(text);
 
-        var result = testConsole.Output;
+        var result = renderer.GetBuffer();
         result.Should()
             .Be(expected);
-    }
-
-
-    [Fact]
-    public void Outputs_string_with_style()
-    {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
-        var expected = "\u001b[1mHello world\u001b[0m";
-
-        //testConsole.Markup("[yellow]Hello world[/]");
-        writer.Write("[bold]Hello world[/]");
-
-        var result = testConsole.Output;
-        result.Should()
-                .Be(expected);
-    }
-
-    [Fact]
-    public void Outputs_string_with_newline()
-    {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
-        string expected = $"Hello world{Environment.NewLine}";
-
-        writer.WriteLine("Hello world");
-
-        var result = testConsole.Output;
-        result.Should()
-                .Be(expected);
     }
 
     [Fact]
     public void Outputs_TextPart()
     {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
+        var renderer = GetRenderer();
         var textPart = new TextPart("Hello world");
         string expected = "Hello world";
 
-        writer.Write(textPart);
+        renderer.RenderTextPart(textPart);
 
-        var result = testConsole.Output;
+        var result = renderer.GetBuffer();
         result.Should()
                 .Be(expected);
     }
@@ -80,14 +45,13 @@ public class RichTerminalTests
     [Fact]
     public void Outputs_TextPart_as_important()
     {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
+        var renderer = GetRenderer();
         var textPart = new TextPart("Hello world", Appearance.Important);
         string expected = "\u001b[1mHello world\u001b[0m";
 
-        writer.Write(textPart);
+        renderer.RenderTextPart(textPart);
 
-        var result = testConsole.Output;
+        var result = renderer.GetBuffer();
         result.Should()
                 .Be(expected);
     }
@@ -95,28 +59,26 @@ public class RichTerminalTests
     [Fact]
     public void Outputs_TextPart_as_inline_code()
     {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
+        var renderer = GetRenderer();
         var textPart = new TextPart("Hello world", Appearance.InlineCode);
         string expected = "\u001b[1mHello world\u001b[0m";
 
-        writer.Write(textPart);
+        renderer.RenderTextPart(textPart);
 
-        var result = testConsole.Output;
+        var result = renderer.GetBuffer();
         result.Should()
                 .Be(expected);
     }
     [Fact]
     public void Outputs_TextPart_as_error()
     {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
+        var renderer = GetRenderer();
         var textPart = new TextPart("Hello world", Appearance.Error);
         string expected = "\u001b[1;91mHello world\u001b[0m";
 
-        writer.Write(textPart);
+        renderer.RenderTextPart(textPart);
 
-        var result = testConsole.Output;
+        var result = renderer.GetBuffer();
         result.Should()
                 .Be(expected);
     }
@@ -124,14 +86,13 @@ public class RichTerminalTests
     [Fact]
     public void Outputs_TextPart_as_warning()
     {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
+        var renderer = GetRenderer();
         var textPart = new TextPart("Hello world", Appearance.Warning);
         string expected = "\u001b[1;33mHello world\u001b[0m";
 
-        writer.Write(textPart);
+        renderer.RenderTextPart(textPart);
 
-        var result = testConsole.Output;
+        var result = renderer.GetBuffer();
         result.Should()
                 .Be(expected);
     }
@@ -139,8 +100,7 @@ public class RichTerminalTests
     [Fact]
     public void Outputs_Paragraph()
     {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
+        var renderer = GetRenderer();
         var paragraph =
                 new OutputEngine.Primitives.Paragraph()
                 {
@@ -149,9 +109,9 @@ public class RichTerminalTests
                 };
         string expected = $"Hello world{Environment.NewLine}";
 
-        writer.Write(paragraph);
+        renderer.RenderParagraph(paragraph);
 
-        var result = testConsole.Output;
+        var result = renderer.GetBuffer();
         result.Should()
                 .Be(expected);
     }
@@ -159,8 +119,7 @@ public class RichTerminalTests
     [Fact]
     public void Outputs_Paragraph_as_Important()
     {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
+        var renderer = GetRenderer();
         var paragraph =
                 new OutputEngine.Primitives.Paragraph()
                 {
@@ -170,50 +129,48 @@ public class RichTerminalTests
         paragraph.Appearance = Appearance.Important;
         string expected = $"\u001b[1mHello world\u001b[0m{Environment.NewLine}";
 
-        writer.Write(paragraph);
+        renderer.RenderParagraph(paragraph);
 
-        var result = testConsole.Output;
+        var result = renderer.GetBuffer();
         result.Should()
                 .Be(expected);
     }
 
-    /*
     [Fact]
     public void Outputs_Group()
     {
-        var writer = new Terminal(new OutputContext(true));
+        var renderer = GetRenderer();
         Group textGroup =
             [
-                new Paragraph()
+                new OutputEngine.Primitives.Paragraph()
                     {
                         new TextPart("Hello"),
                         new TextPart("world")
                     },
-                    new Paragraph()
+                    new OutputEngine.Primitives.Paragraph()
                     {
                         new TextPart($"See you later"),
                     }
             ];
+        string expected = $"Hello world{Environment.NewLine}See you later{Environment.NewLine}";
 
-        writer.Write(textGroup);
+        renderer.RenderGroup(textGroup);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
-            .Be($"Hello world{Environment.NewLine}See you later{Environment.NewLine}");
+            .Be(expected);
     }
-    */
 
     [Fact]
     public void Outputs_Section_header()
     {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
+        var renderer = GetRenderer();
         Section section = new Section("Greeting");
         string expected = $"\u001b[1;33mGreeting\u001b[0m{Environment.NewLine}{Environment.NewLine}";
 
-        writer.Write(section);
+        renderer.RenderSection(section);
 
-        var result = testConsole.Output;
+        var result = renderer.GetBuffer();
         result.Should()
                 .Be(expected);
     }
@@ -221,8 +178,7 @@ public class RichTerminalTests
     [Fact]
     public void Outputs_Section()
     {
-        var testConsole = GetTestConsole();
-        var writer = GetWriter(testConsole);
+        var renderer = GetRenderer();
         Section section = new Section("Greeting")
             {
                 new OutputEngine.Primitives.Paragraph()
@@ -237,36 +193,61 @@ public class RichTerminalTests
             };
         string expected = "\u001b[1;33mGreeting\u001b[0m\r\nHello world\r\nSee you later\r\n\r\n";
 
-        writer.Write(section);
+        renderer.RenderSection(section);
 
-        var result = testConsole.Output;
+        var result = renderer.GetBuffer();
         result.Should()
                 .Be(expected);
     }
 
-    /*
+
     [Fact]
     public void Extra_newline_preserved_in_paragraph()
     {
-        var writer = new Terminal(new OutputContext(true));
+        var renderer = GetRenderer();
         Group textGroup =
             [
-                new Paragraph()
+                new OutputEngine.Primitives.Paragraph()
                     {
                         new TextPart("Hello"),
-                        new TextPart("world")
+                        new TextPart($"world{Environment.NewLine}")
                     },
-                    new Paragraph()
+                    new OutputEngine.Primitives.Paragraph()
                     {
-                        new TextPart($"See you later{Environment.NewLine}"),
+                        new TextPart("See you later"),
                     }
             ];
+        string expected = $"Hello world{Environment.NewLine}{Environment.NewLine}See you later{Environment.NewLine}";
 
-        writer.Write(textGroup);
+        renderer.RenderGroup(textGroup);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
-            .Be($"Hello world{Environment.NewLine}See you later{Environment.NewLine}{Environment.NewLine}");
+            .Be(expected);
     }
-    */
+
+    [Fact]
+    public void Outputs_Table()
+    {
+        var renderer = GetRenderer();
+        var table = new OutputEngine.Primitives.Table(
+            [
+                new OutputEngine.Primitives.TableColumn("Name"),
+                new OutputEngine.Primitives.TableColumn("Age")
+            ])
+        {
+            IncludeHeaders = true
+        };
+        table.TableData.Add([new OutputEngine.Primitives.Paragraph("Alice"), new OutputEngine.Primitives.Paragraph("25")]);
+        table.TableData.Add([new OutputEngine.Primitives.Paragraph("Bob"), new OutputEngine.Primitives.Paragraph("30")]);
+        table.IncludeHeaders = true;
+        var expected = "Name  Age\r\nAlice 25 \r\nBob   30 \r\n";
+
+
+        renderer.RenderTable(table);
+
+        var result = renderer.GetBuffer();
+        result.Should()
+            .Be(expected);
+    }
 }

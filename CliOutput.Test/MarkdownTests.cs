@@ -1,5 +1,5 @@
 using FluentAssertions;
-using OutputEngine.Targets;
+using OutputEngine.Renderers;
 using OutputEngine.Primitives;
 using OutputEngine;
 
@@ -10,11 +10,11 @@ public class MarkdownTests
     [Fact]
     public void Outputs_string()
     {
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.Write("Hello world");
+        renderer.Render("Hello world");
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("Hello world");
     }
@@ -22,11 +22,11 @@ public class MarkdownTests
     [Fact]
     public void Outputs_string_with_newline()
     {
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
 
-        writer.WriteLine("Hello world");
+        renderer.RenderLine("Hello world");
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"Hello world{Environment.NewLine}{Environment.NewLine}");
     }
@@ -34,12 +34,12 @@ public class MarkdownTests
     [Fact]
     public void Outputs_TextPart()
     {
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
         var textPart = new TextPart("Hello world");
 
-        writer.Write(textPart);
+        renderer.RenderTextPart(textPart);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("Hello world");
     }
@@ -47,7 +47,7 @@ public class MarkdownTests
     [Fact]
     public void Outputs_Paragraph()
     {
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
         var paragraph =
                 new Paragraph()
                 {
@@ -55,9 +55,9 @@ public class MarkdownTests
                     new TextPart("world")
                 };
 
-        writer.Write(paragraph);
+        renderer.RenderParagraph(paragraph);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"Hello world{Environment.NewLine}{Environment.NewLine}");
     }
@@ -65,7 +65,7 @@ public class MarkdownTests
     [Fact]
     public void Outputs_Group()
     {
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
         Group textGroup =
             [
                 new Paragraph()
@@ -79,9 +79,9 @@ public class MarkdownTests
                 }
             ];
 
-        writer.Write(textGroup);
+        renderer.RenderGroup(textGroup);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"Hello world{Environment.NewLine}{Environment.NewLine}See you later{Environment.NewLine}{Environment.NewLine}");
     }
@@ -89,10 +89,10 @@ public class MarkdownTests
     [Fact]
     public void Outputs_Section()
     {
-        var writer = new Markdown(new OutputContext(true));
-        writer.OutputContext.OutputStyles = new MarkdownStyles();
+        var renderer = new MarkdownRenderer(new OutputContext(true));
+        //renderer.OutputContext.OutputStyles = new MarkdownStyles();
         Section section =
-            new Section("Goodnight moon")
+            new("Goodnight moon")
             {
                 new Paragraph()
                 {
@@ -105,28 +105,30 @@ public class MarkdownTests
                 }
             };
 
-        writer.Write(section);
+        renderer.RenderSection(section);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
-            .Be($"{Environment.NewLine}## Goodnight moon{Environment.NewLine}{Environment.NewLine}Hello world{Environment.NewLine}{Environment.NewLine}See you later{Environment.NewLine}{Environment.NewLine}");
+            .Be($"## Goodnight moon{Environment.NewLine}{Environment.NewLine}Hello world{Environment.NewLine}{Environment.NewLine}See you later{Environment.NewLine}{Environment.NewLine}");
     }
 
     [Fact]
     public void Outputs_Table()
     {
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new MarkdownRenderer(new OutputContext(true));
         var table = new Table(
             [
                 new TableColumn("Name"),
                 new TableColumn("Age")
-            ]);
-        table.IncludeHeaders= true;
+            ])
+        {
+            IncludeHeaders = true
+        };
         table.TableData.Add([new Paragraph("Alice"), new Paragraph("25")]);
         table.TableData.Add([new Paragraph("Bob"), new Paragraph("30")]);
         table.IncludeHeaders = true;
-        writer.Write(table);
-        var result = writer.GetBuffer();
+        renderer.RenderTable(table);
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"|Name|Age|{Environment.NewLine}|---|---|{Environment.NewLine}|Alice|25|{Environment.NewLine}|Bob|30|{Environment.NewLine}");
     }
@@ -149,15 +151,15 @@ public class MarkdownTests
     [InlineData(ParagraphAppearance.TaskItemChecked, "[x] Hello world")]
     public void Outputs_Paragraph_with_style(string? appearance, string expected)
     {
-        var writer = new Markdown(new OutputContext(true));
+        var renderer = new Markdown(new OutputContext(true));
         var heading = new Paragraph("Hello world")
         {
             Appearance = appearance
         };
 
-        writer.Write(heading);
+        renderer.Write(heading);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"{expected}{Environment.NewLine}{Environment.NewLine}");
 

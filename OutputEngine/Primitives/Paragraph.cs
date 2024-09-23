@@ -3,9 +3,9 @@ using System.Text;
 
 namespace OutputEngine.Primitives;
 
-public class Paragraph : Element, IEnumerable<TextPart>
+public class Paragraph : BlockElement, IEnumerable<TextPart>
 {
-    private List<TextPart> parts = new();
+    private readonly List<TextPart> parts = [];
 
     public Paragraph(params TextPart[] parts)
     {
@@ -21,6 +21,8 @@ public class Paragraph : Element, IEnumerable<TextPart>
     { }
 
     public string? Appearance { get; set; }
+
+    public bool NoNewLineAfter { get; set; }
 
     public int PlainWidth(int trialWidth)
     {
@@ -62,7 +64,7 @@ public class Paragraph : Element, IEnumerable<TextPart>
         => parts[new Range(start, length)];
 
     public int Count()
-        => parts.Count();
+        => parts.Count;
 
     public int Length
     => Count();

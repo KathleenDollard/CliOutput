@@ -4,8 +4,7 @@ namespace OutputEngine;
 
 public abstract class OutputStyles
 {
-    protected Dictionary<string, (string? open, string? close)> Styles
-    { get; set; } = new();
+    protected Dictionary<string, (string? open, string? close)> Styles { get; set; } = [];
 
 
     public OutputStyles()

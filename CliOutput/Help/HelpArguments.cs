@@ -15,7 +15,7 @@ public class HelpArguments : HelpSection
         Add(table);
     }
 
-    private Table GetTable()
+    private static Table GetTable()
     {
         TableColumn[] columns = [
             new("Name", TableColumnKind.Mandatory,minWidth: 25),

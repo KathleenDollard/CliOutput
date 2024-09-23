@@ -1,23 +1,19 @@
-﻿using System.Text;
+﻿using OutputEngine.Renderers;
+using System.Text;
 
 namespace OutputEngine;
 
-public class OutputContext
+public class OutputContext(bool shouldRedirect = false,
+                     int width = 80,
+                     int indentSize = 2,
+                     CliWriter? writer = null)
 {
-    public OutputContext(bool shouldRedirect = false,
-                         int width = 80,
-                         int indentSize = 2)
-    {
-        ShouldRedirect = shouldRedirect;
-        Width = width;
-        IndentSize = indentSize;
-    }
-
-    public bool ShouldRedirect { get; set; } = false;
+    public bool ShouldRedirect { get; set; } = shouldRedirect;
 
 
     public OutputStyles? OutputStyles { get; set; } = null;
     public Encoding Encoding { get; set; } = Encoding.UTF8;
-    public int IndentSize { get; set; }
-    public int Width { get; set; }
+    public int IndentSize { get; set; } = indentSize;
+    public CliWriter? Writer { get; } = writer;
+    public int Width { get; set; } = width;
 }

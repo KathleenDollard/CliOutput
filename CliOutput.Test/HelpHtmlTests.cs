@@ -1,11 +1,11 @@
 ﻿using CliOutput.Help;
 using FluentAssertions;
 using OutputEngine;
-using OutputEngine.Targets;
+using OutputEngine.Renderers;
 
 namespace CliOutput.Test;
 
-public class HelpTestsHtml
+public class HelpHtmlTests
 {
     [Fact]
     public void Outputs_description()
@@ -13,11 +13,11 @@ public class HelpTestsHtml
         var command = new CliCommand("Hello", description: "World");
         var help = HelpLayout.Create(command);
         var description = help.Sections.OfType<HelpDescription>().First();
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write(description);
+        renderer.RenderSection(description);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("<h2>Description</h2><p>&nbsp;&nbsp;World</p>");
     }
@@ -28,11 +28,11 @@ public class HelpTestsHtml
         var command = new CliCommand("Hello", "World");
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write(usage);
+        renderer.RenderSection(usage);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("<h2>Usage</h2><p>&nbsp;&nbsp;Hello</p>");
     }
@@ -47,11 +47,11 @@ public class HelpTestsHtml
         command.AddSubCommand(subcommand2);
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write(usage);
+        renderer.RenderSection(usage);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("<h2>Usage</h2><p>&nbsp;&nbsp;Hello [command]</p>");
     }
@@ -66,11 +66,11 @@ public class HelpTestsHtml
         subcommand1.AddSubCommand(subcommand2);
         var help = HelpLayout.Create(subcommand2);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write(usage);
+        renderer.RenderSection(usage);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("<h2>Usage</h2><p>&nbsp;&nbsp;Hello Welcome Brrr</p>");
     }
@@ -83,11 +83,11 @@ public class HelpTestsHtml
         command.Arguments.Add(new CliArgument("Evening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write(usage);
+        renderer.RenderSection(usage);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("<h2>Usage</h2><p>&nbsp;&nbsp;Hello &lt;MORNING&gt; &lt;EVENING&gt;</p>");
     }
@@ -100,11 +100,11 @@ public class HelpTestsHtml
         command.Options.Add(new CliOption("Evening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var usage = help.Sections.OfType<HelpUsage>().First();
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write(usage);
+        renderer.RenderSection(usage);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("<h2>Usage</h2><p>&nbsp;&nbsp;Hello [options]</p>");
     }
@@ -117,11 +117,11 @@ public class HelpTestsHtml
         command.Arguments.Add(new CliArgument("VerEarlyEvening", "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpArguments>().First();
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write(arguments);
+        renderer.RenderSection(arguments);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
             .StartWith("<h2>Arguments</h2><table><tr><td>&lt;MORNING&gt;");
@@ -135,12 +135,12 @@ public class HelpTestsHtml
         command.Arguments.Add(new CliArgument("Morning", "It is the morning."));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpArguments>().First();
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write(arguments);
-        writer.Write(arguments);
+        renderer.RenderSection(arguments);
+        renderer.RenderSection(arguments);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
             .StartWith("<h2>Arguments</h2><table><tr><td>&lt;EARLYEVENING&gt;");
@@ -154,11 +154,11 @@ public class HelpTestsHtml
         command.Options.Add(new CliOption("VerEarlyEvening", description: "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpOptions>().First();
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write(arguments);
+        renderer.RenderSection(arguments);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
             .StartWith($"<h2>Options</h2><table><tr><td>Morning");
@@ -172,11 +172,11 @@ public class HelpTestsHtml
         command.AddSubCommand(new CliCommand("VerEarlyEvening", "Now, it is the evening"));
         var help = HelpLayout.Create(command);
         var arguments = help.Sections.OfType<HelpSubcommands>().First();
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write(arguments);
+        renderer.RenderSection(arguments);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
             .StartWith($"<h2>Subcommands</h2><table><tr><td>Morning");
@@ -193,11 +193,11 @@ public class HelpTestsHtml
         command.AddSubCommand(new CliCommand("One", description: "The first subcommand."));
         command.AddSubCommand(new CliCommand("Two", description: "The second subcommand"));
         var help = HelpLayout.Create(command);
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write(help);
+        renderer.RenderLayout(help);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         // TODO: More fully test this output, possibly via Approvals testing
         result.Should()
             .StartWith($"<h2>Description</h2>");

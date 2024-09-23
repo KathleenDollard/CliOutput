@@ -1,27 +1,29 @@
 ﻿using OutputEngine.Primitives;
 
-namespace OutputEngine.Targets;
+namespace OutputEngine.Renderers;
 
-public class Markdown : CliOutput
+public class MarkdownRenderer(OutputContext outputContext) 
+    : CliRenderer(outputContext, new MarkdownStyles())
 {
-    public Markdown(OutputContext outputContext)
-        : base(outputContext)
-    { }
-
-    public override void WriteLine()
+    public override void RenderLine()
     {
-        Write(Environment.NewLine);
-        Write(Environment.NewLine);
+        Render($"{Environment.NewLine}{Environment.NewLine}");
     }
 
-    public override void Write(Section section, int indentCount = 0)
+    public override void RenderSection(Section section, int indentCount = 0)
     {
-        Write(Environment.NewLine);
-        WriteLine($"## {section.Title.Text}");
-        Write((Group)section);
+        RenderSectionTitle(section);
+        RenderGroup((Group)section, 1);
     }
 
-    public override void Write(Paragraph paragraph, int indentCount = 0)
+    public override void RenderSectionTitle(Section section)
+    {
+        var paragraph = CreateParagraphText(section.Heading.ToArray());
+        Render($"## {paragraph}");
+        RenderLine();
+    }
+
+    public override void RenderParagraph(Paragraph paragraph, int indentCount = 0)
     {
         if (paragraph.Count() == 0)
         {
@@ -30,10 +32,10 @@ public class Markdown : CliOutput
         var parts = paragraph.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
         var output = CreateParagraphText(parts);
         output = MarkdownEncode(output);
-        WriteLine(output);
+        RenderLine(output);
     }
 
-    public override void Write(Table table, int indentCount = 0)
+    public override void RenderTable(Table table, int indentCount = 0)
     {
         if (table.TableData.Count == 0)
         {
@@ -42,27 +44,27 @@ public class Markdown : CliOutput
         var headers = table.IncludeHeaders
             ? "|" + string.Join('|', table.Columns.Select(col => col.Header)) + "|"
             : new string('|', table.Columns.Count + 1);
-        Write(headers);
-        Write(Environment.NewLine);
+        Render(headers);
+        Render(Environment.NewLine);
         var fence = "|" + string.Join('|', table.Columns.Select(col => "---")) + "|";
-        Write(fence);
-        Write(Environment.NewLine);
+        Render(fence);
+        Render(Environment.NewLine);
         foreach (var row in table.TableData)
         {
-            Write("|");
+            Render("|");
             for (int i = 0; i < table.Columns.Count; i++)
             {
                 var parts = row[i].Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
                 var output = CreateParagraphText(parts);
                 output = MarkdownEncode(output);
-                Write(output);
-                Write("|");
+                Render(output);
+                Render("|");
             }
-            Write(Environment.NewLine);
+            Render(Environment.NewLine);
         }
     }
 
-    private string MarkdownEncode(string input)
+    private static string MarkdownEncode(string input)
     {
         return input.Replace("<", "\\<").Replace(">", "\\>");
         // const string escapeCharacterPattern = @"([<>])";

@@ -1,4 +1,6 @@
-﻿namespace OutputEngine.Primitives;
+﻿using OutputEngine.Primitives;
+
+namespace OutputEngine;
 
 /// <summary>
 /// Standard text appearances for <see cref="Paragraph"/>, inspired by markdown - 
@@ -10,7 +12,7 @@ public static class Appearance
     public const string Warning = "Warning";
     public const string Error = "Error";
     public const string CodeBlock = "CodeBlock";
-    public const string SectionTitle = "SectionTitle";
+    public const string SectionHeading = "SectionTitle";
     public const string LessImportant = "LessImportant";
     public const string Important = "Important";
     public const string InlineCode = "InlineCode";
@@ -25,8 +27,8 @@ public static class Appearance
 /// </remarks>
 public struct CustomTextAppearance
 {
-    public string CustomStyle { get; set; }
-    public Color Color { get; set; }
+    public string? CustomStyle { get; set; }
+    public string? Color { get; set; }
 }
 
 //public static class CustomTextAppearanceStyle
@@ -41,23 +43,23 @@ public struct CustomTextAppearance
 //    public const string Highlight = "Highlight";
 //}
 
-// TODO: Figure out color. (not in a separate file because not clear we need an enum)
-/// <summary>
-/// 
-/// </summary>
-/// <remarks>
-/// Color is challenging because output may be in the ANSI set where "red" is a position in the 
-/// theme, not an actual color, or a display that can handle RGB. Interesting discussion https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences
-/// </remarks>
-public enum Color
-{
-    Black,
-    Red,
-    Green,
-    Yellow,
-    Blue,
-    Magenta,
-    Cyan,
-    White,
-    Default
-}
+//// TODO: Figure out color. (not in a separate file because not clear we need an enum)
+///// <summary>
+///// 
+///// </summary>
+///// <remarks>
+///// Color is challenging because output may be in the ANSI set where "red" is a position in the 
+///// theme, not an actual color, or a display that can handle RGB. Interesting discussion https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences
+///// </remarks>
+//public enum Color
+//{
+//    Black,
+//    Red,
+//    Green,
+//    Yellow,
+//    Blue,
+//    Magenta,
+//    Cyan,
+//    White,
+//    Default
+//}

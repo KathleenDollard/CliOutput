@@ -3,44 +3,45 @@ using System;
 using System.Text;
 using System.Web;
 
-namespace OutputEngine.Targets;
+namespace OutputEngine.Renderers;
 
-public class Html : CliOutput
+public class HtmlRenderer(OutputContext outputContext) 
+    : CliRenderer(outputContext, new HtmlStyles() )
 {
-    public Html(OutputContext outputContext)
-        : base(outputContext)
-    { }
-
-    public override void WriteLine()
+    public override void RenderLine()
     {
-        Write("<br/>");
+        Render("<br/>");
     }
 
     public void WriteEscaped(string? text)
     {
-        Write(HttpUtility.HtmlEncode(text));
+        Render(HttpUtility.HtmlEncode(text));
     }
 
-    public override void Write(Section section, int indentCount = 0)
+    public override void RenderSectionTitle(Section section)
     {
-        Write($"<h2>{section.Title.Text}</h2>");
-        Write((Group)section, 1);
+        var paragraph = CreateParagraphText(section.Heading.ToArray());
+        Render($"<h2>{paragraph}</h2>");
     }
 
     private string GetIndentString(int indentCount)
     {
-        if (indentCount == 0)
-        {
-            return string.Empty;
-        }
-
-        return new StringBuilder(indentCount * IndentSize * "&nbsp;".Length).
-            Insert(0, "&nbsp;", indentCount * IndentSize).ToString();
+        return indentCount == 0
+            ? string.Empty
+            : new StringBuilder(indentCount * IndentSize * "&nbsp;".Length)
+                    .Insert(0, "&nbsp;", indentCount * IndentSize)
+                    .ToString();
     }
 
-    public override void Write(Paragraph paragraph, int indentCount = 0)
+    public override void RenderSection(Section section, int indentCount = 0)
     {
-        var useWidth = Width - indentCount * IndentSize;
+        RenderSectionTitle(section);
+        RenderGroup((Group)section, 1);
+    }
+
+    public override void RenderParagraph(Paragraph paragraph, int indentCount = 0)
+    {
+        var useWidth = Width - (indentCount * IndentSize);
         if (paragraph.Count() == 0)
         {
             return;
@@ -55,18 +56,18 @@ public class Html : CliOutput
         // Add parent tag if paragraph is a list
         if (parentTag != null)
         {
-            Write($"<{parentTag}>");
+            Render($"<{parentTag}>");
         }
 
         // Add items
         foreach (var line in lines)
         {
-            Write($"<{tag}>{indentString}{HttpUtility.HtmlEncode(line)}</{tag}>");
+            Render($"<{tag}>{indentString}{HttpUtility.HtmlEncode(line)}</{tag}>");
         }
 
         if (parentTag != null)
         {
-            Write($"</{parentTag}>");
+            Render($"</{parentTag}>");
         }
     }
 
@@ -90,7 +91,7 @@ public class Html : CliOutput
             _ => ("p", string.Empty, null), // might want to use <div> instead of <p>
         };
 
-    public override void Write(Table table, int indentCount = 0)
+    public override void RenderTable(Table table, int indentCount = 0)
     {
         if (table.TableData.Count == 0)
         {
@@ -101,23 +102,28 @@ public class Html : CliOutput
             ? $"<tr><th>{string.Join("</th><th>", table.Columns.Select(col => col.Header))}</th></tr>"
             : string.Empty;
 
-        Write($"<table>{headers}");
+        Render($"<table>{headers}");
         if (table.Title != null)
         {
-            Write($"<caption>{HttpUtility.HtmlEncode(table.Title)}</caption>");
+            Render($"<caption>{HttpUtility.HtmlEncode(table.Title)}</caption>");
         }
 
         foreach (var row in table.TableData)
         {
-            Write("<tr>");
+            Render("<tr>");
             for (int i = 0; i < table.Columns.Count; i++)
             {
-                Write("<td>");
+                Render("<td>");
                 WriteEscaped(row[i].ToString());
-                Write("</td>");
+                Render("</td>");
             }
-            Write("</tr>");
+            Render("</tr>");
         }
-        Write("</table>");
+        Render("</table>");
     }
+
+    //public override void RenderTextPart(TextPart textPart)
+    //{
+    //    throw new NotImplementedException();
+    //}
 }

@@ -28,7 +28,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\CliOutput\CliOutput.csproj" />
 		<ProjectReference Include="..\OutputEngine\OutputEngine.csproj" />
-		<ProjectReference Include="..\RichHelp\RichOutput.csproj" />
+		<ProjectReference Include="..\SpectreCliOutput\SpectreCliOutput.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

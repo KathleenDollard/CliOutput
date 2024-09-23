@@ -1,4 +1,4 @@
-﻿using OutputEngine;
+﻿using OutputEngine.Primitives;
 
 namespace CliOutput;
 
