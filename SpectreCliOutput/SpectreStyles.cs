@@ -2,9 +2,9 @@
 using System;
 using System.ComponentModel;
 
-namespace OutputEngine.Targets;
+namespace OutputEngine.Renderers;
 
-public class RichTerminalStyles : OutputStyles
+public class SpectreStyles : OutputStyles
 {
     protected override (string? open, string? close) Important => ("[bold]", "[/]");
     protected override (string? open, string? close) InlineCode => ("[bold]", "[/]");

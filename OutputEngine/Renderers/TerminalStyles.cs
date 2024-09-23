@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace OutputEngine.Targets;
+namespace OutputEngine.Renderers;
 
 public class TerminalStyles : OutputStyles
 {

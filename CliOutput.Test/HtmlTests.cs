@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using OutputEngine;
 using OutputEngine.Primitives;
-using OutputEngine.Targets;
+using OutputEngine.Renderers;
 
 namespace CliOutput.Test;
 
@@ -10,11 +10,11 @@ public class HtmlTests
     [Fact]
     public void Outputs_string()
     {
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.Write("Hello world");
+        renderer.Render("Hello world");
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("Hello world");
     }
@@ -22,11 +22,11 @@ public class HtmlTests
     [Fact]
     public void Outputs_string_with_newline()
     {
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
 
-        writer.WriteLine("Hello world");
+        renderer.RenderLine("Hello world");
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"Hello world<br/>");
     }
@@ -34,12 +34,12 @@ public class HtmlTests
     [Fact]
     public void Outputs_TextPart()
     {
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
         var textPart = new TextPart("Hello world");
 
-        writer.Write(textPart);
+        renderer.RenderTextPart(textPart);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("Hello world");
     }
@@ -47,7 +47,7 @@ public class HtmlTests
     [Fact]
     public void Outputs_Paragraph()
     {
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
         var paragraph =
                 new Paragraph()
                 {
@@ -55,9 +55,9 @@ public class HtmlTests
                 new TextPart("world")
                 };
 
-        writer.Write(paragraph);
+        renderer.RenderParagraph(paragraph);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("<p>Hello world</p>");
     }
@@ -65,7 +65,7 @@ public class HtmlTests
     [Fact]
     public void Outputs_Group()
     {
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
         Group textGroup =
             [
                 new Paragraph()
@@ -79,9 +79,9 @@ public class HtmlTests
             }
             ];
 
-        writer.Write(textGroup);
+        renderer.RenderGroup(textGroup);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"<p>Hello world</p><p>See you later</p>");
     }
@@ -90,24 +90,24 @@ public class HtmlTests
     [Fact]
     public void Outputs_Section()
     {
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
         Section section =
-            new Section("Goodnight moon")
+            new("Goodnight moon")
             {
-            new Paragraph()
-            {
-                new TextPart("Hello"),
-                new TextPart("world")
-            },
-            new Paragraph()
-            {
-                new TextPart("See you later"),
-            }
+                new Paragraph()
+                {
+                    new TextPart("Hello"),
+                    new TextPart("world")
+                },
+                new Paragraph()
+                {
+                    new TextPart("See you later"),
+                }
             };
 
-        writer.Write(section);
+        renderer.RenderSection(section);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"<h2>Goodnight moon</h2><p>&nbsp;&nbsp;Hello world</p><p>&nbsp;&nbsp;See you later</p>");
     }
@@ -115,7 +115,7 @@ public class HtmlTests
     [Fact]
     public void Outputs_Table()
     {
-        var writer = new Html(new OutputContext(true));
+        var renderer = new HtmlRenderer(new OutputContext(true));
         var table = new Table(
             [
             new TableColumn("Name"),
@@ -124,8 +124,8 @@ public class HtmlTests
         table.TableData.Add([new Paragraph("Alice"), new Paragraph("25")]);
         table.TableData.Add([new Paragraph("Bob"), new Paragraph("30")]);
         table.IncludeHeaders = true;
-        writer.Write(table);
-        var result = writer.GetBuffer();
+        renderer.RenderTable(table);
+        var result = renderer.GetBuffer();
         result.Should()
             .Be("<table><tr><th>Name</th><th>Age</th></tr><tr><td>Alice</td><td>25</td></tr><tr><td>Bob</td><td>30</td></tr></table>");
     }
@@ -148,15 +148,15 @@ public class HtmlTests
     //[InlineData(ParagraphAppearance.TaskItemChecked, "[x] Hello world")]
     public void Outputs_Paragraph_with_style(string? appearance, string expected)
     {
-        var writer = new Html(new OutputContext(true));
+        var renderer = new Html(new OutputContext(true));
         var heading = new Paragraph("Hello world")
         {
             Appearance = appearance
         };
 
-        writer.Write(heading);
+        renderer.Write(heading);
 
-        var result = writer.GetBuffer();
+        var result = renderer.GetBuffer();
         result.Should()
             .Be($"{expected}");
 

@@ -5,7 +5,8 @@
 using CliOutput;
 using CliOutput.Help;
 using OutputEngine;
-using OutputEngine.Targets;
+using OutputEngine.Renderers;
+using SpectreCliOutput;
 
 var rootCommand = new CliCommand("dotnet", "The base of the .NET CLI");
 var buildCommand = new CliCommand("build", description: ".NET Builder");
@@ -49,10 +50,10 @@ var help = HelpLayout.Create(buildCommand);
 var outputContext = new OutputContext();
 var renderer = args.LastOrDefault() switch
 {
-    "markdown" => (OutputEngine.Targets.CliOutput)new Markdown(outputContext),
-    "html" => new Html(outputContext),
+    "markdown" => (OutputEngine.Renderers.CliRenderer)new MarkdownRenderer(outputContext),
+    "html" => new HtmlRenderer(outputContext),
     "richold" => new RichTerminalOld(outputContext),
-    "rich" => new RichTerminal(outputContext),
-    _ => new Terminal(outputContext)
+    "rich" => new SpectreRenderer(outputContext),
+    _ => new TerminalRenderer(outputContext)
 };
-renderer.Write(help);
+renderer.RenderLayout(help);

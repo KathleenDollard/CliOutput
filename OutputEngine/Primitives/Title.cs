@@ -1,3 +1,4 @@
 ﻿namespace OutputEngine.Primitives;
 
-public abstract class Element { }
+public class Title : Paragraph
+{ }

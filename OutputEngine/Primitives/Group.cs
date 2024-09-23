@@ -1,6 +1,6 @@
 ﻿namespace OutputEngine.Primitives;
 
-public class Group : List<Element>
+public class Group : List<BlockElement>
 {
 
 }

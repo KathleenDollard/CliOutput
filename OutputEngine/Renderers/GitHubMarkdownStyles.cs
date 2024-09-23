@@ -1,4 +1,4 @@
-﻿namespace OutputEngine.Targets;
+﻿namespace OutputEngine.Renderers;
 
 public abstract class GitHubMarkdownStyles : MarkdownStyles
 {
