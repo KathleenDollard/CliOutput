@@ -35,7 +35,8 @@ public class MarkdownRenderer(OutputContext outputContext)
         var parts = paragraph.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
         var output = CreateParagraphText(parts);
         output = MarkdownEncode(output);
-        RenderLine(output);
+        (string? open, string? close) = OutputStyles?.GetStyle(paragraph.Style) ?? (null, null);
+        RenderLine($"{(open is null ? "" : open)}{output}{(close is null ? "" : close)}");
     }
 
     public override void RenderTable(Table table, int indentCount = 0)

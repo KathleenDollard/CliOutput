@@ -135,26 +135,26 @@ public class HtmlTests
 
     /* Rethinking styles
     [Theory]
-    [InlineData(ParagraphAppearance.Heading1, "<h1>Hello world</h1>")]
-    [InlineData(ParagraphAppearance.Heading2, "<h2>Hello world</h2>")]
-    [InlineData(ParagraphAppearance.Heading3, "<h3>Hello world</h3>")]
-    [InlineData(ParagraphAppearance.Heading4, "<h4>Hello world</h4>")]
-    [InlineData(ParagraphAppearance.Heading5, "<h5>Hello world</h5>")]
-    [InlineData(ParagraphAppearance.Heading6, "<h6>Hello world</h6>")]
-    [InlineData(ParagraphAppearance.BlockQuote, "<blockquote>Hello world</blockquote>")]
-    //[InlineData(ParagraphAppearance.BlockQuoteDoubled, "<blockquote><blockquote>Hello world</blockquote></blockquote>")]
-    //[InlineData(ParagraphAppearance.BlockQuoteTripled, "<blockquote><blockquote><blockquote>Hello world</blockquote></blockquote></blockquote>")]
-    [InlineData(ParagraphAppearance.NumberedList, "<ol><li>Hello world</li></ol>")]
-    [InlineData(ParagraphAppearance.BulletedList, "<ul><li>Hello world</li></ul>")]
-    //[InlineData(ParagraphAppearance.DefinitionList, "#Hello world")] This needs more complex structure
-    //[InlineData(ParagraphAppearance.TaskItemUnchecked, "[ ] Hello world")]
-    //[InlineData(ParagraphAppearance.TaskItemChecked, "[x] Hello world")]
-    public void Outputs_Paragraph_with_style(string? appearance, string expected)
+    [InlineData(ParagraphStyle.Heading1, "<h1>Hello world</h1>")]
+    [InlineData(ParagraphStyle.Heading2, "<h2>Hello world</h2>")]
+    [InlineData(ParagraphStyle.Heading3, "<h3>Hello world</h3>")]
+    [InlineData(ParagraphStyle.Heading4, "<h4>Hello world</h4>")]
+    [InlineData(ParagraphStyle.Heading5, "<h5>Hello world</h5>")]
+    [InlineData(ParagraphStyle.Heading6, "<h6>Hello world</h6>")]
+    [InlineData(ParagraphStyle.BlockQuote, "<blockquote>Hello world</blockquote>")]
+    //[InlineData(ParagraphStyle.BlockQuoteDoubled, "<blockquote><blockquote>Hello world</blockquote></blockquote>")]
+    //[InlineData(ParagraphStyle.BlockQuoteTripled, "<blockquote><blockquote><blockquote>Hello world</blockquote></blockquote></blockquote>")]
+    [InlineData(ParagraphStyle.NumberedList, "<ol><li>Hello world</li></ol>")]
+    [InlineData(ParagraphStyle.BulletedList, "<ul><li>Hello world</li></ul>")]
+    //[InlineData(ParagraphStyle.DefinitionList, "#Hello world")] This needs more complex structure
+    //[InlineData(ParagraphStyle.TaskItemUnchecked, "[ ] Hello world")]
+    //[InlineData(ParagraphStyle.TaskItemChecked, "[x] Hello world")]
+    public void Outputs_Paragraph_with_style(string? style, string expected)
     {
         var renderer = new Html(new OutputContext(true));
         var heading = new Paragraph("Hello world")
         {
-            Appearance = appearance
+            Style = style
         };
 
         renderer.Write(heading);

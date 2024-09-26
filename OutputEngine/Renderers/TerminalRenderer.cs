@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using OutputEngine.Primitives;
-using System.Text;
 
 namespace OutputEngine.Renderers;
 
@@ -21,24 +20,25 @@ public class TerminalRenderer(OutputContext outputContext, OutputStyles? default
         var output = CreateParagraphText(parts);
         var lines = output.Wrap(useWidth);
         var lastLine = lines.Last();
-        (string? open, string? close) = OutputStyles?.GetStyle(paragraph.Appearance) ?? (null, null);
+
+        (string? open, string? close) = OutputStyles?.GetStyle(paragraph.Style) ?? (null, null);
         if (!string.IsNullOrEmpty(open))
         {
             Render(open);
         }
+        var last = lines.Last();
         foreach (var line in lines)
         {
             Render(useIndent + line);
+            if (line == last)
+            {
+            Render(close);
+            }
             if (!(line == lastLine && paragraph.NoNewLineAfter))
             {
                 RenderLine();
             }
         }
-        if (!string.IsNullOrEmpty(close))
-        {
-            Render(close);
-        }
-
     }
 
     public override void RenderTable(Table table, int indentCount = 0)

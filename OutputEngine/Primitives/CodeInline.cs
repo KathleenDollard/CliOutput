@@ -3,8 +3,8 @@
 
 namespace OutputEngine.Primitives;
 // TODO: "Inline" might be a good part of this name
-public class TextPart(string text, string? style = null, Whitespace whitespace = Whitespace.BeforeAndAfter) 
+public class CodeInline(string text, string? style = null, Whitespace whitespace = Whitespace.BeforeAndAfter) 
     : InlineElement(text, style, whitespace)
 {
-    public static implicit operator string(TextPart textPart) => textPart.Text;
+    public Uri? Link { get; set; }
 }

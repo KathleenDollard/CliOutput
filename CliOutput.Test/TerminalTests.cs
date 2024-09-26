@@ -5,6 +5,7 @@ using FluentAssertions;
 using OutputEngine.Renderers;
 using OutputEngine.Primitives;
 using OutputEngine;
+using System.Collections;
 
 namespace CliOutput.Test;
 
@@ -89,7 +90,6 @@ public class TerminalTests
             .Be($"Hello world{Environment.NewLine}See you later{Environment.NewLine}");
     }
 
-
     [Fact]
     public void Outputs_Section()
     {
@@ -114,7 +114,6 @@ public class TerminalTests
             .Be($"Greeting:{Environment.NewLine}  Hello world{Environment.NewLine}  See you later{Environment.NewLine}{Environment.NewLine}");
     }
 
-
     [Fact]
     public void Extra_newline_preserved_in_paragraph()
     {
@@ -137,5 +136,67 @@ public class TerminalTests
         var result = renderer.GetBuffer();
         result.Should()
             .Be($"Hello world{Environment.NewLine}See you later{Environment.NewLine}{Environment.NewLine}");
+    }
+
+    public class ParagraphData : IEnumerable<object[]>
+    {
+        private readonly List<object[]> _data;
+
+        public ParagraphData()
+        {
+            _data = [
+                [ParagraphStyle.SectionHeading, $"Hello World:"],
+                [ParagraphStyle.CodeBlock, $"Hello World"],
+                [ParagraphStyle.Quote, $"Hello World"],
+                [ParagraphStyle.Heading1, $"Hello World"],
+                [ParagraphStyle.Heading2, $"Hello World"],
+                [ParagraphStyle.Heading3, $"Hello World"],
+                [ParagraphStyle.Error, $"Hello World"],
+                [ParagraphStyle.Warning, $"Hello World"],];
+        }
+
+
+        public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    [Theory]
+    [ClassData(typeof(ParagraphData))]
+    public void Outputs_Paragraph_with_style(string? style, string expected)
+    {
+        var renderer = new TerminalRenderer(new OutputContext(true));
+        var heading = new Paragraph("Hello World")
+        {
+            Style = style
+        };
+
+        renderer.RenderParagraph(heading);
+
+        var result = renderer.GetBuffer();
+        result.Should()
+            .Be($"{expected}{Environment.NewLine}");
+
+    }
+
+    [Theory]
+    [InlineData(TextStyle.Normal, "Hello world")]
+    [InlineData(TextStyle.Important, "Hello world")]
+    [InlineData(TextStyle.SlightlyImportant, "Hello world")]
+    [InlineData(TextStyle.CodeInline, "Hello world")]
+    [InlineData(TextStyle.Argument, "<Hello world>")]
+    [InlineData(TextStyle.Optional, "[Hello world]")]
+    [InlineData(TextStyle.LinkText, "Hello world")]
+    public void Outputs_TextPart_with_style(string? style, string expected)
+    {
+        var renderer = new TerminalRenderer(new OutputContext(true));
+        var textPart = new TextPart("Hello world", style);
+
+        renderer.RenderTextPart(textPart);
+
+        var result = renderer.GetBuffer();
+        result.Should()
+            .Be($"{expected}");
+
     }
 }

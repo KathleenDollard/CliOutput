@@ -50,7 +50,7 @@ var help = HelpLayout.Create(buildCommand);
 var outputContext = new OutputContext();
 var renderer = args.LastOrDefault() switch
 {
-    "markdown" => (OutputEngine.Renderers.CliRenderer)new MarkdownRenderer(outputContext),
+    "markdown" => (CliRenderer)new MarkdownRenderer(outputContext),
     "html" => new HtmlRenderer(outputContext),
     "richold" => new RichTerminalOld(outputContext),
     "rich" => new SpectreRenderer(outputContext),

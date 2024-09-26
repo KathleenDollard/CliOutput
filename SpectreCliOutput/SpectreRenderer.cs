@@ -5,6 +5,7 @@ using OutputEngine;
 using OutputEngine.Primitives;
 using OutputEngine.Renderers;
 using Spectre.Console;
+using SpectreStyle = Spectre.Console.Style;
 
 namespace SpectreCliOutput;
 
@@ -15,7 +16,7 @@ namespace SpectreCliOutput;
 public class SpectreRenderer(OutputContext outputContext)
     : TerminalRenderer(outputContext, new SpectreStyles(), new SpectreWriter(outputContext))
 {
-    public void Render(string text, Style style)
+    public void Render(string text, SpectreStyle style)
     {
         var markup = new Markup(Markup.Escape(text), style);
         var writer = Advanced.WriterFromRenderer<SpectreWriter>(this);
@@ -57,7 +58,7 @@ public class SpectreRenderer(OutputContext outputContext)
         var output = CreateParagraphText(parts);
         var lines = output.Wrap(useWidth);
 
-        var style = GetSpectreStyle(paragraph.Appearance);
+        var style = GetSpectreStyle(paragraph.Style);
 
         foreach (var line in lines)
         {
@@ -73,11 +74,11 @@ public class SpectreRenderer(OutputContext outputContext)
         }
     }
 
-    private Style? GetSpectreStyle(string? appearance)
+    private SpectreStyle? GetSpectreStyle(string? style)
     {
-        return string.IsNullOrWhiteSpace(appearance) || OutputStyles is not SpectreStyles styles
+        return string.IsNullOrWhiteSpace(style) || OutputStyles is not SpectreStyles styles
             ? null
-            : styles.GetSpectreStyle(appearance);
+            : styles.GetSpectreStyle(style);
     }
 
     public override void RenderTable(OutputEngine.Primitives.Table table, int indentCount = 0)

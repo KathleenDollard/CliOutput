@@ -4,10 +4,7 @@
 using FluentAssertions;
 using OutputEngine.Primitives;
 using OutputEngine;
-using Spectre.Console.Testing;
-using Spectre.Console;
 using SpectreCliOutput;
-using OutputEngine.Renderers;
 
 namespace RichOutputTests;
 
@@ -49,7 +46,7 @@ public class SpectreTests
     public void Outputs_TextPart_as_important()
     {
         var renderer = GetRenderer();
-        var textPart = new TextPart("Hello world", Appearance.Important);
+        var textPart = new TextPart("Hello world", TextStyle.Important);
         string expected = "\u001b[1mHello world\u001b[0m";
 
         renderer.RenderTextPart(textPart);
@@ -63,7 +60,7 @@ public class SpectreTests
     public void Outputs_TextPart_as_inline_code()
     {
         var renderer = GetRenderer();
-        var textPart = new TextPart("Hello world", Appearance.InlineCode);
+        var textPart = new TextPart("Hello world", TextStyle.CodeInline);
         string expected = "\u001b[1mHello world\u001b[0m";
 
         renderer.RenderTextPart(textPart);
@@ -76,7 +73,7 @@ public class SpectreTests
     public void Outputs_TextPart_as_error()
     {
         var renderer = GetRenderer();
-        var textPart = new TextPart("Hello world", Appearance.Error);
+        var textPart = new TextPart("Hello world", ParagraphStyle.Error);
         string expected = "\u001b[1;91mHello world\u001b[0m";
 
         renderer.RenderTextPart(textPart);
@@ -90,7 +87,7 @@ public class SpectreTests
     public void Outputs_TextPart_as_warning()
     {
         var renderer = GetRenderer();
-        var textPart = new TextPart("Hello world", Appearance.Warning);
+        var textPart = new TextPart("Hello world",ParagraphStyle.Warning);
         string expected = "\u001b[1;33mHello world\u001b[0m";
 
         renderer.RenderTextPart(textPart);
@@ -129,7 +126,7 @@ public class SpectreTests
                     new TextPart("Hello"),
                     new TextPart("world")
                 };
-        paragraph.Appearance = Appearance.Important;
+        paragraph.Style = TextStyle.Important;
         string expected = $"\u001b[1mHello world\u001b[0m{Environment.NewLine}";
 
         renderer.RenderParagraph(paragraph);

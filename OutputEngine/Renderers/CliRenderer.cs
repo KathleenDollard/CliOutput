@@ -165,7 +165,7 @@ public abstract class CliRenderer
 
     public virtual void RenderTextPart(TextPart textPart)
     {
-        (string? open, string? close) = OutputStyles?.GetStyle(textPart.Appearance) ?? (null, null);
+        (string? open, string? close) = OutputStyles?.GetStyle(textPart.Style) ?? (null, null);
         Render($"{open ?? ""}{textPart.Text}{close ?? ""}");
 
     }

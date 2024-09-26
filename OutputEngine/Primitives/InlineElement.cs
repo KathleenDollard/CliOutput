@@ -3,4 +3,10 @@
 
 namespace OutputEngine.Primitives;
 
-public abstract class InlineElement : Element { }
+public abstract class InlineElement(string text, string? style , Whitespace whitespace)
+    : Element
+{
+    public string Text { get; } = text;
+    public Whitespace Whitespace { get; } = whitespace;
+    public string? Style { get; } = style;
+}

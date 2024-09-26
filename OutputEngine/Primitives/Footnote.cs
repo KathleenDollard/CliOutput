@@ -8,16 +8,16 @@
 //public class Footnote
 //    : Paragraph
 //{
-//    public Footnote(TextAppearance appearance, params TextPart[] parts)
-//        : base(appearance, parts)
+//    public Footnote(TextStyle style, params TextPart[] parts)
+//        : base(style, parts)
 //    { }
 
 //    public Footnote(params TextPart[] parts)
 //        : base(parts)
 //    { }
 
-//    public Footnote(TextAppearance appearance, params string[] parts)
-//        : base(appearance, parts.Select(s => new TextPart(s)).ToArray())
+//    public Footnote(TextStyle style, params string[] parts)
+//        : base(style, parts.Select(s => new TextPart(s)).ToArray())
 //    { }
 
 //    public Footnote(params string[] parts)

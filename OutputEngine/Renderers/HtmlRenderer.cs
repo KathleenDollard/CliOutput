@@ -1,8 +1,9 @@
 // Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+// TODO: Styling has not yet been done for HTML and decisions are needed, such as how much to use CSS, and possibly there is a "write your own CSS" and a "here's our styling" version needed.
+
 using OutputEngine.Primitives;
-using System;
 using System.Text;
 using System.Web;
 
@@ -54,7 +55,7 @@ public class HtmlRenderer(OutputContext outputContext)
         var parts = paragraph.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
         var output = CreateParagraphText(parts);
         var lines = output.Wrap(useWidth);
-        var (tag, style, parentTag) = ParseParagraphAppearanceToTags(paragraph);
+        var (tag, style, parentTag) = ParseParagraphStyleToTags(paragraph);
 
         // Add parent tag if paragraph is a list
         if (parentTag != null)
@@ -74,22 +75,22 @@ public class HtmlRenderer(OutputContext outputContext)
         }
     }
 
-    private static (string tag, string style, string? parentTag) ParseParagraphAppearanceToTags(Paragraph paragraph) =>
-        paragraph.Appearance switch
+    private static (string tag, string style, string? parentTag) ParseParagraphStyleToTags(Paragraph paragraph) =>
+        paragraph.Style switch
         {
 
-            Appearance.Warning => ("p", "style=\"color:orange;\"", null),
-            Appearance.Error => ("p", "style=\"color:red;\"", null),
+            ParagraphStyle.Warning => ("p", "style=\"color:orange;\"", null),
+            ParagraphStyle.Error => ("p", "style=\"color:red;\"", null),
             /*
-            ParagraphAppearance.Heading1 => ("h1", string.Empty, null),
-            ParagraphAppearance.Heading2 => ("h2", string.Empty, null),
-            ParagraphAppearance.Heading3 => ("h3", string.Empty, null),
-            ParagraphAppearance.Heading4 => ("h4", string.Empty, null),
-            ParagraphAppearance.Heading5 => ("h5", string.Empty, null),
-            ParagraphAppearance.Heading6 => ("h6", string.Empty, null),
-            ParagraphAppearance.BlockQuote => ("blockquote", string.Empty, null),
-            ParagraphAppearance.NumberedList => ("li", string.Empty, "ol"),
-            ParagraphAppearance.BulletedList => ("li", string.Empty, "ul"),
+            ParagraphStyle.Heading1 => ("h1", string.Empty, null),
+            ParagraphStyle.Heading2 => ("h2", string.Empty, null),
+            ParagraphStyle.Heading3 => ("h3", string.Empty, null),
+            ParagraphStyle.Heading4 => ("h4", string.Empty, null),
+            ParagraphStyle.Heading5 => ("h5", string.Empty, null),
+            ParagraphStyle.Heading6 => ("h6", string.Empty, null),
+            ParagraphStyle.BlockQuote => ("blockquote", string.Empty, null),
+            ParagraphStyle.NumberedList => ("li", string.Empty, "ol"),
+            ParagraphStyle.BulletedList => ("li", string.Empty, "ul"),
             */
             _ => ("p", string.Empty, null), // might want to use <div> instead of <p>
         };
@@ -124,9 +125,4 @@ public class HtmlRenderer(OutputContext outputContext)
         }
         Render("</table>");
     }
-
-    //public override void RenderTextPart(TextPart textPart)
-    //{
-    //    throw new NotImplementedException();
-    //}
 }

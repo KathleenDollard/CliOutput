@@ -6,35 +6,46 @@ using OutputEngine.Primitives;
 namespace OutputEngine;
 
 /// <summary>
-/// Standard text appearances for <see cref="Paragraph"/>, inspired by markdown - 
+/// Standard text styles for <see cref="Paragraph"/>, inspired by markdown - 
 /// few will have meaning in plain text.
 /// </summary>
-public static class Appearance
+public static class ParagraphStyle
+{
+    public const string SectionHeading = "SectionHeading";
+    public const string CodeBlock = "CodeBlock";
+    public const string Quote = "Quote";
+    public const string Heading1 = "Heading1";
+    public const string Heading2 = "Heading2";
+    public const string Heading3 = "Heading3";
+    public const string Error = "Error";
+    public const string Warning = "Warning";
+}
+
+public static class TextStyle
 {
     public const string Normal = "NormalParagraph";
-    public const string Warning = "Warning";
-    public const string Error = "Error";
-    public const string CodeBlock = "CodeBlock";
-    public const string SectionHeading = "SectionTitle";
-    public const string LessImportant = "LessImportant";
     public const string Important = "Important";
-    public const string InlineCode = "InlineCode";
+    public const string SlightlyImportant = "LessImportant";
+    public const string CodeInline = "CodeInline";
+    public const string Argument = "Argument";
+    public const string Optional = "Optional";
+    public const string LinkText = "LinkText";
 }
 
 /// <summary>
 /// Sets a specific style. 
 /// </summary>
 /// <remarks>
-/// This can undermine semantic text appearance,
+/// This can undermine semantic text style,
 /// so should be used with caution.
 /// </remarks>
-public struct CustomTextAppearance
+public struct CustomTextStyle
 {
     public string? CustomStyle { get; set; }
     public string? Color { get; set; }
 }
 
-//public static class CustomTextAppearanceStyle
+//public static class CustomTextStyleStyle
 //{
 //    public const string Italic = "Italic";
 //    public const string Bold = "Bold";

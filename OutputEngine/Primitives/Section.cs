@@ -9,7 +9,7 @@ public class Section : Group
     {
         Heading = new Paragraph(heading)
         {
-            Appearance = Appearance.SectionHeading,
+            Style = ParagraphStyle.SectionHeading,
             NoNewLineAfter = true
         };
     }

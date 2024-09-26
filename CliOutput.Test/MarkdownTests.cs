@@ -5,6 +5,7 @@ using FluentAssertions;
 using OutputEngine.Renderers;
 using OutputEngine.Primitives;
 using OutputEngine;
+using System.Collections;
 
 namespace CliOutput.Test;
 
@@ -136,37 +137,66 @@ public class MarkdownTests
             .Be($"|Name|Age|{Environment.NewLine}|---|---|{Environment.NewLine}|Alice|25|{Environment.NewLine}|Bob|30|{Environment.NewLine}");
     }
 
-    /* Rethinking styles
-    [Theory]
-    [InlineData(ParagraphAppearance.Heading1, "# Hello world")]
-    [InlineData(ParagraphAppearance.Heading2, "## Hello world")]
-    [InlineData(ParagraphAppearance.Heading3, "### Hello world")]
-    [InlineData(ParagraphAppearance.Heading4, "#### Hello world")]
-    [InlineData(ParagraphAppearance.Heading5, "##### Hello world")]
-    [InlineData(ParagraphAppearance.Heading6, "###### Hello world")]
-    [InlineData(ParagraphAppearance.BlockQuote, "> Hello world")]
-    [InlineData(ParagraphAppearance.BlockQuoteDoubled, "> > Hello world")]
-    [InlineData(ParagraphAppearance.BlockQuoteTripled, "> > > Hello world")]
-    [InlineData(ParagraphAppearance.NumberedList, "1 Hello world")]
-    [InlineData(ParagraphAppearance.BulletedList, "- Hello world")]
-    //[InlineData(ParagraphAppearance.DefinitionList, "#Hello world")]
-    [InlineData(ParagraphAppearance.TaskItemUnchecked, "[ ] Hello world")]
-    [InlineData(ParagraphAppearance.TaskItemChecked, "[x] Hello world")]
-    public void Outputs_Paragraph_with_style(string? appearance, string expected)
+
+    public class ParagraphData : IEnumerable<object[]>
     {
-        var renderer = new Markdown(new OutputContext(true));
-        var heading = new Paragraph("Hello world")
+        private readonly List<object[]> _data;
+
+        public ParagraphData()
         {
-            Appearance = appearance
+            _data = [
+                [ParagraphStyle.SectionHeading, $"## Hello World:"],
+                [ParagraphStyle.CodeBlock, $"```{Environment.NewLine}Hello World{Environment.NewLine}```"],
+                [ParagraphStyle.Quote, $"> Hello World"],
+                [ParagraphStyle.Heading1, $"# Hello World"],
+                [ParagraphStyle.Heading2, $"## Hello World"],
+                [ParagraphStyle.Heading3, $"### Hello World"],
+                [ParagraphStyle.Error, $"**<span style = 'color: Red ;'>Hello World</span>**"],
+                [ParagraphStyle.Warning, $"**<span style = 'color: Yellow ;'>Hello World</span>**"],];
+        }
+
+
+        public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    [Theory]
+    [ClassData(typeof(ParagraphData))]
+    public void Outputs_Paragraph_with_style(string? style, string expected)
+    {
+        var renderer = new MarkdownRenderer(new OutputContext(true));
+        var heading = new Paragraph("Hello World")
+        {
+            Style = style
         };
 
-        renderer.Write(heading);
+        renderer.RenderParagraph(heading);
 
         var result = renderer.GetBuffer();
         result.Should()
             .Be($"{expected}{Environment.NewLine}{Environment.NewLine}");
 
     }
-    */
 
+    [Theory]
+    [InlineData(TextStyle.Normal, "Hello world")]
+    [InlineData(TextStyle.Important, "**Hello world**")]
+    [InlineData(TextStyle.SlightlyImportant, "_Hello world_")]
+    [InlineData(TextStyle.CodeInline, "`Hello world`")]
+    [InlineData(TextStyle.Argument, "<Hello world>")]
+    [InlineData(TextStyle.Optional, "[Hello world]")]
+    [InlineData(TextStyle.LinkText, "Hello world", Skip ="WIP")]
+    public void Outputs_TextPart_with_style(string? style, string expected)
+    {
+        var renderer = new MarkdownRenderer(new OutputContext(true));
+        var textPart = new TextPart("Hello world", style);
+
+        renderer.RenderTextPart(textPart);
+
+        var result = renderer.GetBuffer();
+        result.Should()
+            .Be($"{expected}");
+
+    }
 }

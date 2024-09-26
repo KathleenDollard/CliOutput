@@ -31,12 +31,12 @@ public class RichTerminalOld(OutputContext outputContext)
         var output = CreateParagraphText(parts);
         var lines = output.Wrap(useWidth);
 
-        // TO-DO: Test different appearances on different terminal backgrounds
+        // TO-DO: Test different styles on different terminal backgrounds
         // to ensure colors work for different environments
-        var style = paragraph.Appearance switch
+        var style = paragraph.Style switch
         {
-            Appearance.Error => new Style(foreground: Color.Red, background: Color.Black, decoration: Decoration.Bold),
-            Appearance.Warning => new Style(foreground: Color.Yellow, background: Color.Black, decoration: Decoration.Bold),
+            ParagraphStyle.Error => new Style(foreground: Color.Red, background: Color.Black, decoration: Decoration.Bold),
+            ParagraphStyle.Warning => new Style(foreground: Color.Yellow, background: Color.Black, decoration: Decoration.Bold),
             _ => new Style(decoration: Decoration.None),
         };
 

@@ -23,7 +23,7 @@ public class Paragraph : BlockElement, IEnumerable<TextPart>
         : this(Array.Empty<TextPart>())
     { }
 
-    public string? Appearance { get; set; }
+    public string? Style { get; set; }
 
     public bool NoNewLineAfter { get; set; }
 

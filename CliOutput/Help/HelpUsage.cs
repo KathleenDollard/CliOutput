@@ -22,7 +22,7 @@ public class HelpUsage : HelpSection
 
         static void AddHelpUsageLine(CliCommand command, Paragraph paragraph)
         {
-            paragraph.AddRange(command.Ancestors.Reverse().Select(x => new TextPart(x.Name, Appearance.LessImportant)));
+            paragraph.AddRange(command.Ancestors.Reverse().Select(x => new TextPart(x.Name, TextStyle.SlightlyImportant)));
             paragraph.Add(new TextPart(command.Name));
             if (command.Arguments.Any())
             {
@@ -30,11 +30,11 @@ public class HelpUsage : HelpSection
             }
             if (command.SubCommands.Any())
             {
-                paragraph.Add(new TextPart("[command]", Appearance.LessImportant));
+                paragraph.Add(new TextPart("[command]", TextStyle.SlightlyImportant));
             }
             if (command.Options.Count > 0)
             {
-                paragraph.Add(new TextPart("[options]", Appearance.LessImportant));
+                paragraph.Add(new TextPart("[options]", TextStyle.SlightlyImportant));
             }
 
             static TextPart UsageFromArg(CliArgument arg)
