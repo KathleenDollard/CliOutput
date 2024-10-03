@@ -3,4 +3,18 @@
 
 namespace OutputEngine.Primitives;
 
-public abstract class Element { }
+// TODO: Constructor for implicit types from elements like Link or InlineCode
+public abstract class Element(Styles styles)
+{
+    public Styles Styles { get;  } = styles;
+
+    public void AddStyle(string style)
+    {
+        Styles.Add(style);
+    }
+
+    public void ResetStyles()
+    {
+        Styles.Reset();
+    }
+}

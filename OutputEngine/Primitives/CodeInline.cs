@@ -3,8 +3,7 @@
 
 namespace OutputEngine.Primitives;
 // TODO: "Inline" might be a good part of this name
-public class CodeInline(string text, string? style = null, Whitespace whitespace = Whitespace.BeforeAndAfter) 
-    : InlineElement(text, style, whitespace)
-{
-    public Uri? Link { get; set; }
-}
+// TODO: Specify language
+public class CodeInline(string text)
+    : InlineElement(text, Styles.CreateWithImplicit(InlineStyle.CodeInline), SurroundingWhitespace.BeforeAndAfter)
+{ }

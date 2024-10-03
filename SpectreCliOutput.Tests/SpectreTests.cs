@@ -46,7 +46,7 @@ public class SpectreTests
     public void Outputs_TextPart_as_important()
     {
         var renderer = GetRenderer();
-        var textPart = new TextPart("Hello world", TextStyle.Important);
+        var textPart = new TextPart("Hello world", InlineStyle.Important);
         string expected = "\u001b[1mHello world\u001b[0m";
 
         renderer.RenderTextPart(textPart);
@@ -60,7 +60,7 @@ public class SpectreTests
     public void Outputs_TextPart_as_inline_code()
     {
         var renderer = GetRenderer();
-        var textPart = new TextPart("Hello world", TextStyle.CodeInline);
+        var textPart = new TextPart("Hello world", InlineStyle.CodeInline);
         string expected = "\u001b[1mHello world\u001b[0m";
 
         renderer.RenderTextPart(textPart);
@@ -73,7 +73,7 @@ public class SpectreTests
     public void Outputs_TextPart_as_error()
     {
         var renderer = GetRenderer();
-        var textPart = new TextPart("Hello world", ParagraphStyle.Error);
+        var textPart = new TextPart("Hello world", BlockStyle.Error);
         string expected = "\u001b[1;91mHello world\u001b[0m";
 
         renderer.RenderTextPart(textPart);
@@ -87,7 +87,7 @@ public class SpectreTests
     public void Outputs_TextPart_as_warning()
     {
         var renderer = GetRenderer();
-        var textPart = new TextPart("Hello world",ParagraphStyle.Warning);
+        var textPart = new TextPart("Hello world",BlockStyle.Warning);
         string expected = "\u001b[1;33mHello world\u001b[0m";
 
         renderer.RenderTextPart(textPart);
@@ -109,7 +109,7 @@ public class SpectreTests
                 };
         string expected = $"Hello world{Environment.NewLine}";
 
-        renderer.RenderParagraph(paragraph);
+        renderer.RenderTextContainer(paragraph);
 
         var result = renderer.GetBuffer();
         result.Should()
@@ -126,10 +126,10 @@ public class SpectreTests
                     new TextPart("Hello"),
                     new TextPart("world")
                 };
-        paragraph.Style = TextStyle.Important;
+        paragraph.AddStyle(InlineStyle.Important);
         string expected = $"\u001b[1mHello world\u001b[0m{Environment.NewLine}";
 
-        renderer.RenderParagraph(paragraph);
+        renderer.RenderTextContainer(paragraph);
 
         var result = renderer.GetBuffer();
         result.Should()
@@ -140,7 +140,7 @@ public class SpectreTests
     public void Outputs_Group()
     {
         var renderer = GetRenderer();
-        Group textGroup =
+        BlockContainer textGroup =
             [
                 new OutputEngine.Primitives.Paragraph()
                     {
@@ -205,7 +205,7 @@ public class SpectreTests
     public void Extra_newline_preserved_in_paragraph()
     {
         var renderer = GetRenderer();
-        Group textGroup =
+        BlockContainer textGroup =
             [
                 new OutputEngine.Primitives.Paragraph()
                     {
@@ -238,8 +238,8 @@ public class SpectreTests
         {
             IncludeHeaders = true
         };
-        table.TableData.Add([new OutputEngine.Primitives.Paragraph("Alice"), new OutputEngine.Primitives.Paragraph("25")]);
-        table.TableData.Add([new OutputEngine.Primitives.Paragraph("Bob"), new OutputEngine.Primitives.Paragraph("30")]);
+        table.Rows.Add([new OutputEngine.Primitives.Paragraph("Alice"), new OutputEngine.Primitives.Paragraph("25")]);
+        table.Rows.Add([new OutputEngine.Primitives.Paragraph("Bob"), new OutputEngine.Primitives.Paragraph("30")]);
         table.IncludeHeaders = true;
         var expected = "Name  Age\r\nAlice 25 \r\nBob   30 \r\n";
 

@@ -7,7 +7,7 @@ namespace OutputEngine.Primitives;
 /// A table that can be rendered.
 /// </summary>
 public sealed class Table(IReadOnlyList<TableColumn> columns) 
-    : BlockElement
+    : BlockElement(Styles.CreateWithImplicit(BlockStyle.Table))
 {
     public IEnumerable<Paragraph?> GetHeaderRow()
     {
@@ -24,15 +24,10 @@ public sealed class Table(IReadOnlyList<TableColumn> columns)
     public IReadOnlyList<TableColumn> Columns { get; } = columns;
 
     /// <summary>
-    /// Gets the table data.
+    /// Gets the rows of data.
     /// </summary>
-    public List<Paragraph[]> TableData { get; } = [];
+    public List<Paragraph[]> Rows { get; } = [];
 
-    /// <summary>
-    /// Gets or sets the table title.
-    /// </summary>
-    public string? Title { get; set; }
-    public bool DisplayClosingBar { get; set; }
     public bool IncludeHeaders { get; set; }
 
     public void AddRow(params Paragraph[] row)
@@ -41,7 +36,7 @@ public sealed class Table(IReadOnlyList<TableColumn> columns)
         {
             throw new ArgumentOutOfRangeException(nameof(row), "The number of row items must match the number of table columns.");
         }
-        TableData.Add(row);
+        Rows.Add(row);
     }
 
     public void AddRow(params string[] row)

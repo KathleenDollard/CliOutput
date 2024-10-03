@@ -18,25 +18,26 @@ public class RichTerminalOld(OutputContext outputContext)
         AnsiConsole.WriteLine();
     }
 
-    public override void RenderParagraph(OutputEngine.Primitives.Paragraph paragraph, int indentCount = 0)
+    public override void RenderTextContainer(TextContainer container, int indentCount = 0)
     {
-        if (paragraph.Count() == 0)
+        if (container.Count() == 0)
         {
             return;
         }
 
         var useWidth = Width - (indentCount * IndentSize);
         var useIndent = new string(' ', indentCount * IndentSize);
-        var parts = paragraph.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
+        var parts = container.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
         var output = CreateParagraphText(parts);
         var lines = output.Wrap(useWidth);
 
         // TO-DO: Test different styles on different terminal backgrounds
         // to ensure colors work for different environments
-        var style = paragraph.Style switch
+        // TODO: mhutch: Should first or last win (order of applying). Just taking first is obviously wrong
+        var style = container.Styles[0] switch
         {
-            ParagraphStyle.Error => new Style(foreground: Color.Red, background: Color.Black, decoration: Decoration.Bold),
-            ParagraphStyle.Warning => new Style(foreground: Color.Yellow, background: Color.Black, decoration: Decoration.Bold),
+            BlockStyle.Error => new Style(foreground: Color.Red, background: Color.Black, decoration: Decoration.Bold),
+            BlockStyle.Warning => new Style(foreground: Color.Yellow, background: Color.Black, decoration: Decoration.Bold),
             _ => new Style(decoration: Decoration.None),
         };
 
@@ -67,7 +68,7 @@ public class RichTerminalOld(OutputContext outputContext)
             result.AddColumn(new Spectre.Console.TableColumn(col.Header != null ? col.Header.ToString() : string.Empty));
         }
 
-        foreach (var row in table.TableData)
+        foreach (var row in table.Rows)
         {
             var rowData = new List<Spectre.Console.Paragraph>();
 

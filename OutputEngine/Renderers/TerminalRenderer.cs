@@ -8,7 +8,7 @@ namespace OutputEngine.Renderers;
 public class TerminalRenderer(OutputContext outputContext, OutputStyles? defaultOutputStyles = null, CliWriter? defaultWriter = null) 
     : CliRenderer(outputContext, defaultOutputStyles ?? new TerminalStyles(), defaultWriter)
 {
-    public override void RenderParagraph(Paragraph paragraph, int indentCount = 0)
+    public override void RenderTextContainer(TextContainer paragraph, int indentCount = 0)
     {
         var useWidth = Width - (indentCount * IndentSize);
         var useIndent = new string(' ', indentCount * IndentSize);
@@ -21,7 +21,7 @@ public class TerminalRenderer(OutputContext outputContext, OutputStyles? default
         var lines = output.Wrap(useWidth);
         var lastLine = lines.Last();
 
-        (string? open, string? close) = OutputStyles?.GetStyle(paragraph.Style) ?? (null, null);
+        (string? open, string? close) = OutputStyles?.GetStyleCodes(paragraph.Styles) ?? (null, null);
         if (!string.IsNullOrEmpty(open))
         {
             Render(open);

@@ -59,7 +59,7 @@ public class TerminalTests
                     new TextPart("world")
                 };
 
-        renderer.RenderParagraph(paragraph);
+        renderer.RenderTextContainer(paragraph);
 
         var result = renderer.GetBuffer();
         result.Should()
@@ -70,7 +70,7 @@ public class TerminalTests
     public void Outputs_Group()
     {
         var renderer = new TerminalRenderer(new OutputContext(true));
-        Group textGroup =
+        BlockContainer textGroup =
             [
                 new Paragraph()
                 {
@@ -118,7 +118,7 @@ public class TerminalTests
     public void Extra_newline_preserved_in_paragraph()
     {
         var renderer = new TerminalRenderer(new OutputContext(true));
-        Group textGroup =
+        BlockContainer textGroup =
             [
                 new Paragraph()
                 {
@@ -145,14 +145,14 @@ public class TerminalTests
         public ParagraphData()
         {
             _data = [
-                [ParagraphStyle.SectionHeading, $"Hello World:"],
-                [ParagraphStyle.CodeBlock, $"Hello World"],
-                [ParagraphStyle.Quote, $"Hello World"],
-                [ParagraphStyle.Heading1, $"Hello World"],
-                [ParagraphStyle.Heading2, $"Hello World"],
-                [ParagraphStyle.Heading3, $"Hello World"],
-                [ParagraphStyle.Error, $"Hello World"],
-                [ParagraphStyle.Warning, $"Hello World"],];
+                [BlockStyle.SectionHeading, $"Hello World:"],
+                [BlockStyle.CodeBlock, $"Hello World"],
+                [BlockStyle.Quote, $"Hello World"],
+                [BlockStyle.Heading1, $"Hello World"],
+                [BlockStyle.Heading2, $"Hello World"],
+                [BlockStyle.Heading3, $"Hello World"],
+                [BlockStyle.Error, $"Hello World"],
+                [BlockStyle.Warning, $"Hello World"],];
         }
 
 
@@ -163,15 +163,13 @@ public class TerminalTests
 
     [Theory]
     [ClassData(typeof(ParagraphData))]
-    public void Outputs_Paragraph_with_style(string? style, string expected)
+    public void Outputs_Paragraph_with_style(string style, string expected)
     {
         var renderer = new TerminalRenderer(new OutputContext(true));
-        var heading = new Paragraph("Hello World")
-        {
-            Style = style
-        };
+        var paragraph = new Paragraph("Hello World");
+        paragraph.AddStyle(style);
 
-        renderer.RenderParagraph(heading);
+        renderer.RenderTextContainer(paragraph);
 
         var result = renderer.GetBuffer();
         result.Should()
@@ -180,13 +178,13 @@ public class TerminalTests
     }
 
     [Theory]
-    [InlineData(TextStyle.Normal, "Hello world")]
-    [InlineData(TextStyle.Important, "Hello world")]
-    [InlineData(TextStyle.SlightlyImportant, "Hello world")]
-    [InlineData(TextStyle.CodeInline, "Hello world")]
-    [InlineData(TextStyle.Argument, "<Hello world>")]
-    [InlineData(TextStyle.Optional, "[Hello world]")]
-    [InlineData(TextStyle.LinkText, "Hello world")]
+    [InlineData(InlineStyle.Normal, "Hello world")]
+    [InlineData(InlineStyle.Important, "Hello world")]
+    [InlineData(InlineStyle.SlightlyImportant, "Hello world")]
+    [InlineData(InlineStyle.CodeInline, "Hello world")]
+    [InlineData(InlineStyle.Argument, "<Hello world>")]
+    [InlineData(InlineStyle.Optional, "[Hello world]")]
+    [InlineData(InlineStyle.LinkText, "Hello world")]
     public void Outputs_TextPart_with_style(string? style, string expected)
     {
         var renderer = new TerminalRenderer(new OutputContext(true));

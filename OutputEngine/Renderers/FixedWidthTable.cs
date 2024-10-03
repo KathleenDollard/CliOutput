@@ -1,8 +1,9 @@
 ﻿//using CellLine = OutputEngine.Primitives.Paragraph;
 //using RowLine = System.Collections.Generic.List<OutputEngine.Primitives.Paragraph>;
+using OutputEngine.Primitives;
 using Row = System.Collections.Generic.List<System.Collections.Generic.List<string>>;
 
-namespace OutputEngine.Primitives;
+namespace OutputEngine.Renderers;
 
 public class FixedWidthTable
 {
@@ -17,7 +18,7 @@ public class FixedWidthTable
 
     public IEnumerable<IEnumerable<string>>? LayoutTable(int width, bool includeHeaders = false)
     {
-        if (Table.Columns.Count() == 0 || Table.TableData.Count == 0)
+        if (Table.Columns.Count() == 0 || Table.Rows.Count == 0)
         {
             return null;
         }
@@ -50,7 +51,7 @@ public class FixedWidthTable
                 returnRows.Add(headerRows);
             }
 
-            foreach (var row in table.TableData)
+            foreach (var row in table.Rows)
             {
                 var wrappedRow = row.Select((cell, col)
                     => cell is null
@@ -105,7 +106,7 @@ public class FixedWidthTable
             var headerWidth = !includeHeaders
                                 ? 0
                                 : HeaderWidth(table.GetHeaderRow()?.ElementAt(position), trialWidth);
-            return Math.Max(table.TableData.Max(row => row[position].PlainWidth(trialWidth)),
+            return Math.Max(table.Rows.Max(row => row[position].PlainWidth(trialWidth)),
                                 headerWidth);
 
             static int HeaderWidth(Paragraph? header, int trialWidth)
@@ -328,7 +329,7 @@ public class FixedWidthTable
             }
             var tentativeWidth = workingWidths[i].TentativeWidth;
             // Wrapping may result in this being smaller than the tentativeWidth
-            var maxCurrent = Table.TableData.Max(row => row[i].PlainWidth(tentativeWidth));
+            var maxCurrent = Table.Rows.Max(row => row[i].PlainWidth(tentativeWidth));
             workingWidths[i].DesiredWidth = int.Max(maxCurrent, Table.Columns[i].MinWidth);
             workingWidths[i].DesiredWidth = int.Max(maxCurrent, Table.Columns[i].MinWidth);
             if (workingWidths[i].DesiredWidth <= Table.Columns[i].MinWidth)

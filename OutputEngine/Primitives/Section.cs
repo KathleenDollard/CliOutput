@@ -3,18 +3,17 @@
 
 namespace OutputEngine.Primitives;
 
-public class Section : Group
+public class Section : BlockContainer
 {
-    public Section(string heading)
+    public Section(string? heading, params BlockElement[] elements)
+        : base(Styles.CreateWithImplicit(BlockStyle.Section))
     {
-        Heading = new Paragraph(heading)
+        if (heading != null)
         {
-            Style = ParagraphStyle.SectionHeading,
-            NoNewLineAfter = true
-        };
+            Heading = new Header(heading);
+        }
     }
 
-    public Paragraph Heading { get; }
-
-
+    // TODO: Replace Paragraph type in this case with Title, then rename to Heading. Supplies the implicit style and semantics.
+    public Header? Heading { get; }
 }

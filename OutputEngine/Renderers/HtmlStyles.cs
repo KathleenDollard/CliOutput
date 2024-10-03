@@ -5,6 +5,7 @@ namespace OutputEngine.Renderers;
 
 public class HtmlStyles : OutputStyles
 {
+    // TODO: If a style is not recognized, for HTML  pass it through
     public HtmlStyles()
     {
         DocumentOpen = """
@@ -24,7 +25,7 @@ public class HtmlStyles : OutputStyles
 
     protected override (string? open, string? close) Important => (null, null);
     protected override (string? open, string? close) CodeInline => (null, null);
-    protected override (string? open, string? close) Error => (null, null);
+    protected override (string? open, string? close) Error => ("<span class='error'>", "</span>");
     protected override (string? open, string? close) Warning => (null, null);
 
     protected override (string? open, string? close) SlightlyImportant  => (null, null);
@@ -32,7 +33,7 @@ public class HtmlStyles : OutputStyles
     protected override (string? open, string? close) SectionHeading => (null, null);
     protected override (string? open, string? close) CodeBlock => (null, null);
     protected override (string? open, string? close) Quote => (null, null);
-    protected override (string? open, string? close) Heading1 => (null, null);
+    protected override (string? open, string? close) Heading1 => ("<h1>", "</h1>");
     protected override (string? open, string? close) Heading2 => (null, null);
     protected override (string? open, string? close) Heading3 => (null, null);
 }

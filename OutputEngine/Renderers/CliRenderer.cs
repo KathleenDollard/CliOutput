@@ -48,7 +48,7 @@ public abstract class CliRenderer
     {
         if (block is Paragraph paragraph)
         {
-            RenderParagraph(paragraph, indentCount);
+            RenderTextContainer(paragraph, indentCount);
         }
         else
         {
@@ -89,11 +89,11 @@ public abstract class CliRenderer
     protected bool Redirecting => Writer.Redirecting;
     protected int Width { get; }
     protected int IndentSize { get; }
-    protected OutputStyles? OutputStyles { get; }
+    protected OutputStyles OutputStyles { get; }
     protected Dictionary<Type, Action<BlockElement, int>> BlockRenderers { get; }
     protected Dictionary<Type, Action<InlineElement>> InlineRenderers { get; }
 
-    public abstract void RenderParagraph(Paragraph paragraph, int indentCount = 0);
+    public abstract void RenderTextContainer(TextContainer container, int indentCount = 0);
     public abstract void RenderTable(Table table, int indentCount);
 
     /// <summary>
@@ -140,11 +140,11 @@ public abstract class CliRenderer
 
     public virtual void RenderSectionTitle(Section section)
     {
-        RenderParagraph(section.Heading);
+        RenderTextContainer(section.Heading);
         RenderLine();
     }
 
-    public virtual void RenderGroup(Group group, int indentCount = 0)
+    public virtual void RenderGroup(BlockContainer group, int indentCount = 0)
     {
         if (!group.Any())
         {
@@ -165,9 +165,11 @@ public abstract class CliRenderer
 
     public virtual void RenderTextPart(TextPart textPart)
     {
-        (string? open, string? close) = OutputStyles?.GetStyle(textPart.Style) ?? (null, null);
-        Render($"{open ?? ""}{textPart.Text}{close ?? ""}");
+        // Apply all styles
 
+            (string? open, string? close) = OutputStyles.GetStyleCodes(textPart.Styles);
+ 
+        Render($"{open}{textPart.Text}{close}");
     }
 
 
@@ -184,13 +186,13 @@ public abstract class CliRenderer
             {
                 continue;
             }
-            if (!lastNonEmptyPartEmittedSpaceOrAtStart && part.Whitespace.HasFlag(Whitespace.Before))
+            if (!lastNonEmptyPartEmittedSpaceOrAtStart && part.Whitespace.HasFlag(SurroundingWhitespace.Before))
             {
                 sb.Append(' ');
             }
             sb.Append(part);
             // TODO: Determine whether a part that emits only whitespace should add an extra space
-            if (part != last && part.Whitespace.HasFlag(Whitespace.After))
+            if (part != last && part.Whitespace.HasFlag(SurroundingWhitespace.After))
             {
                 sb.Append(' ');
                 lastNonEmptyPartEmittedSpaceOrAtStart = true;

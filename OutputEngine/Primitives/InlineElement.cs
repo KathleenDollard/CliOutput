@@ -3,10 +3,10 @@
 
 namespace OutputEngine.Primitives;
 
-public abstract class InlineElement(string text, string? style , Whitespace whitespace)
-    : Element
+// TODO: Pass style to base
+public abstract class InlineElement(string text, Styles styles, SurroundingWhitespace whitespace)
+    : Element(styles)
 {
     public string Text { get; } = text;
-    public Whitespace Whitespace { get; } = whitespace;
-    public string? Style { get; } = style;
+    public SurroundingWhitespace Whitespace { get; } = whitespace;
 }

@@ -45,20 +45,21 @@ public class SpectreRenderer(OutputContext outputContext)
         }
     }
 
-    public override void RenderParagraph(OutputEngine.Primitives.Paragraph paragraph, int indentCount = 0)
+    public override void RenderTextContainer(TextContainer container, int indentCount = 0)
     {
-        if (paragraph.Count() == 0)
+        if (container.Count() == 0)
         {
             return;
         }
 
         var useWidth = Width - (indentCount * IndentSize);
         var useIndent = new string(' ', indentCount * IndentSize);
-        var parts = paragraph.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
+        var parts = container.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
         var output = CreateParagraphText(parts);
         var lines = output.Wrap(useWidth);
 
-        var style = GetSpectreStyle(paragraph.Style);
+        // TODO: mhutch: Another case of managing multiple styles gracefully. Taking first is wrong.
+        var style = GetSpectreStyle(container.Styles[0]);
 
         foreach (var line in lines)
         {
@@ -112,7 +113,7 @@ public class SpectreRenderer(OutputContext outputContext)
             result.AddColumn(new Spectre.Console.TableColumn(col.Header != null ? col.Header.ToString() : string.Empty));
         }
 
-        foreach (var row in table.TableData)
+        foreach (var row in table.Rows)
         {
             var rowData = new List<Spectre.Console.Paragraph>();
 

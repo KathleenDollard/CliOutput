@@ -3,7 +3,10 @@
 
 namespace OutputEngine.Primitives;
 
-public class Group : List<BlockElement>
+public enum Alignment
 {
-
+    Left = 0,
+    Right,
+    Centered,
+    Justified
 }

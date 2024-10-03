@@ -51,14 +51,14 @@ public class HtmlTests
     public void Outputs_Paragraph()
     {
         var renderer = new HtmlRenderer(new OutputContext(true));
-        var paragraph =
+        var container =
                 new Paragraph()
                 {
                 new TextPart("Hello"),
                 new TextPart("world")
                 };
 
-        renderer.RenderParagraph(paragraph);
+        renderer.RenderTextContainer(container);
 
         var result = renderer.GetBuffer();
         result.Should()
@@ -69,7 +69,7 @@ public class HtmlTests
     public void Outputs_Group()
     {
         var renderer = new HtmlRenderer(new OutputContext(true));
-        Group textGroup =
+        BlockContainer textGroup =
             [
                 new Paragraph()
             {
@@ -124,8 +124,8 @@ public class HtmlTests
             new TableColumn("Name"),
             new TableColumn("Age")
             ]);
-        table.TableData.Add([new Paragraph("Alice"), new Paragraph("25")]);
-        table.TableData.Add([new Paragraph("Bob"), new Paragraph("30")]);
+        table.Rows.Add([new Paragraph("Alice"), new Paragraph("25")]);
+        table.Rows.Add([new Paragraph("Bob"), new Paragraph("30")]);
         table.IncludeHeaders = true;
         renderer.RenderTable(table);
         var result = renderer.GetBuffer();

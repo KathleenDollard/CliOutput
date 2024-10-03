@@ -3,8 +3,16 @@
 
 namespace OutputEngine.Primitives;
 // TODO: "Inline" might be a good part of this name
-public class TextPart(string text, string? style = null, Whitespace whitespace = Whitespace.BeforeAndAfter) 
-    : InlineElement(text, style, whitespace)
+// TODO: Remove and use InLineElement (remove abstract)
+public class TextPart : InlineElement
 {
+    public TextPart(string text, string? style = null, SurroundingWhitespace whitespace = SurroundingWhitespace.BeforeAndAfter) : base(text, Styles.Empty, whitespace)
+    {
+        if (style is not null)
+        {
+            Styles.Add(style);
+        }
+    }
+
     public static implicit operator string(TextPart textPart) => textPart.Text;
 }

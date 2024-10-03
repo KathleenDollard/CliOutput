@@ -52,14 +52,14 @@ public class MarkdownTests
     public void Outputs_Paragraph()
     {
         var renderer = new MarkdownRenderer(new OutputContext(true));
-        var paragraph =
+        var container =
                 new Paragraph()
                 {
                     new TextPart("Hello"),
                     new TextPart("world")
                 };
 
-        renderer.RenderParagraph(paragraph);
+        renderer.RenderTextContainer(container);
 
         var result = renderer.GetBuffer();
         result.Should()
@@ -70,7 +70,7 @@ public class MarkdownTests
     public void Outputs_Group()
     {
         var renderer = new MarkdownRenderer(new OutputContext(true));
-        Group textGroup =
+        BlockContainer textGroup =
             [
                 new Paragraph()
                 {
@@ -128,8 +128,8 @@ public class MarkdownTests
         {
             IncludeHeaders = true
         };
-        table.TableData.Add([new Paragraph("Alice"), new Paragraph("25")]);
-        table.TableData.Add([new Paragraph("Bob"), new Paragraph("30")]);
+        table.Rows.Add([new Paragraph("Alice"), new Paragraph("25")]);
+        table.Rows.Add([new Paragraph("Bob"), new Paragraph("30")]);
         table.IncludeHeaders = true;
         renderer.RenderTable(table);
         var result = renderer.GetBuffer();
@@ -145,14 +145,14 @@ public class MarkdownTests
         public ParagraphData()
         {
             _data = [
-                [ParagraphStyle.SectionHeading, $"## Hello World:"],
-                [ParagraphStyle.CodeBlock, $"```{Environment.NewLine}Hello World{Environment.NewLine}```"],
-                [ParagraphStyle.Quote, $"> Hello World"],
-                [ParagraphStyle.Heading1, $"# Hello World"],
-                [ParagraphStyle.Heading2, $"## Hello World"],
-                [ParagraphStyle.Heading3, $"### Hello World"],
-                [ParagraphStyle.Error, $"**<span style = 'color: Red ;'>Hello World</span>**"],
-                [ParagraphStyle.Warning, $"**<span style = 'color: Yellow ;'>Hello World</span>**"],];
+                [BlockStyle.SectionHeading, $"## Hello World:"],
+                [BlockStyle.CodeBlock, $"```{Environment.NewLine}Hello World{Environment.NewLine}```"],
+                [BlockStyle.Quote, $"> Hello World"],
+                [BlockStyle.Heading1, $"# Hello World"],
+                [BlockStyle.Heading2, $"## Hello World"],
+                [BlockStyle.Heading3, $"### Hello World"],
+                [BlockStyle.Error, $"**<span style = 'color: Red ;'>Hello World</span>**"],
+                [BlockStyle.Warning, $"**<span style = 'color: Yellow ;'>Hello World</span>**"],];
         }
 
 
@@ -163,15 +163,13 @@ public class MarkdownTests
 
     [Theory]
     [ClassData(typeof(ParagraphData))]
-    public void Outputs_Paragraph_with_style(string? style, string expected)
+    public void Outputs_Paragraph_with_style(string style, string expected)
     {
         var renderer = new MarkdownRenderer(new OutputContext(true));
-        var heading = new Paragraph("Hello World")
-        {
-            Style = style
-        };
+        var heading = new Paragraph("Hello World");
+        heading.AddStyle(style);
 
-        renderer.RenderParagraph(heading);
+        renderer.RenderTextContainer(heading);
 
         var result = renderer.GetBuffer();
         result.Should()
@@ -180,13 +178,13 @@ public class MarkdownTests
     }
 
     [Theory]
-    [InlineData(TextStyle.Normal, "Hello world")]
-    [InlineData(TextStyle.Important, "**Hello world**")]
-    [InlineData(TextStyle.SlightlyImportant, "_Hello world_")]
-    [InlineData(TextStyle.CodeInline, "`Hello world`")]
-    [InlineData(TextStyle.Argument, "<Hello world>")]
-    [InlineData(TextStyle.Optional, "[Hello world]")]
-    [InlineData(TextStyle.LinkText, "Hello world", Skip ="WIP")]
+    [InlineData(InlineStyle.Normal, "Hello world")]
+    [InlineData(InlineStyle.Important, "**Hello world**")]
+    [InlineData(InlineStyle.SlightlyImportant, "_Hello world_")]
+    [InlineData(InlineStyle.CodeInline, "`Hello world`")]
+    [InlineData(InlineStyle.Argument, "<Hello world>")]
+    [InlineData(InlineStyle.Optional, "[Hello world]")]
+    [InlineData(InlineStyle.LinkText, "Hello world", Skip = "WIP")]
     public void Outputs_TextPart_with_style(string? style, string expected)
     {
         var renderer = new MarkdownRenderer(new OutputContext(true));

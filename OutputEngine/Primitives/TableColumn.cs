@@ -10,9 +10,11 @@ namespace OutputEngine.Primitives;
 /// Initializes a new instance of the <see cref="TableColumn"/> class.
 /// </remarks>
 /// <param name="header">The <see cref="string"/> instance to use as the table column header.</param>
+// TODO: Change header to paragraph's base type
+// TODO: mhutch: Should a column header be paragraph or header, or it's own style? Probably not Header as that would bring likely unwanted sytling
 public sealed class TableColumn(Paragraph header,
                                 TableColumnKind columnKind = TableColumnKind.Default,
-                                TableColumnAlignment alignment = TableColumnAlignment.Left,
+                                Alignment alignment = Alignment.Left,
                                 byte maxWidth = TableColumn.maxAllowedColumnWidth,
                                 byte minWidth = 10)
 {
@@ -20,7 +22,7 @@ public sealed class TableColumn(Paragraph header,
 
     public TableColumn(string header,
                        TableColumnKind columnKind = TableColumnKind.Default,
-                       TableColumnAlignment alignment = TableColumnAlignment.Left,
+                       Alignment alignment = Alignment.Left,
                        byte maxWidth = maxAllowedColumnWidth,
                        byte minWidth = 15)
         : this(new Paragraph(header), columnKind, alignment, maxWidth, minWidth)
@@ -37,7 +39,7 @@ public sealed class TableColumn(Paragraph header,
     public Paragraph? Footer { get; set; }
 
     public TableColumnKind ColumnKind { get; set; } = columnKind;
-    public TableColumnAlignment Alignment { get; set; } = alignment;
+    public Alignment Alignment { get; set; } = alignment;
     public byte MaxWidth { get; set; } = maxWidth;
     public byte MinWidth { get; set; } = minWidth;
     public bool Hide { get; set; }

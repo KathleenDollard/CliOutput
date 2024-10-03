@@ -40,22 +40,22 @@ public class HtmlRenderer(OutputContext outputContext)
     public override void RenderSection(Section section, int indentCount = 0)
     {
         RenderSectionTitle(section);
-        RenderGroup((Group)section, 1);
+        RenderGroup((BlockContainer)section, 1);
     }
 
-    public override void RenderParagraph(Paragraph paragraph, int indentCount = 0)
+    public override void RenderTextContainer(TextContainer container, int indentCount = 0)
     {
         var useWidth = Width - (indentCount * IndentSize);
-        if (paragraph.Count() == 0)
+        if (container.Count() == 0)
         {
             return;
         }
 
         var indentString = GetIndentString(indentCount);
-        var parts = paragraph.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
+        var parts = container.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
         var output = CreateParagraphText(parts);
         var lines = output.Wrap(useWidth);
-        var (tag, style, parentTag) = ParseParagraphStyleToTags(paragraph);
+        var (tag, style, parentTag) = ParseTextContainerStyleToTags(container);
 
         // Add parent tag if paragraph is a list
         if (parentTag != null)
@@ -75,12 +75,13 @@ public class HtmlRenderer(OutputContext outputContext)
         }
     }
 
-    private static (string tag, string style, string? parentTag) ParseParagraphStyleToTags(Paragraph paragraph) =>
-        paragraph.Style switch
+    private static (string tag, string style, string? parentTag) ParseTextContainerStyleToTags(TextContainer container) 
+        =>
+        // TODO: mhutch - I could use some HTML expertise here for managing styles ,ignring all but the first style is obviously wrong
+        container.Styles[0] switch
         {
-
-            ParagraphStyle.Warning => ("p", "style=\"color:orange;\"", null),
-            ParagraphStyle.Error => ("p", "style=\"color:red;\"", null),
+            BlockStyle.Warning => ("p", "style=\"color:orange;\"", null),
+            BlockStyle.Error => ("p", "style=\"color:red;\"", null),
             /*
             ParagraphStyle.Heading1 => ("h1", string.Empty, null),
             ParagraphStyle.Heading2 => ("h2", string.Empty, null),
@@ -97,7 +98,7 @@ public class HtmlRenderer(OutputContext outputContext)
 
     public override void RenderTable(Table table, int indentCount = 0)
     {
-        if (table.TableData.Count == 0)
+        if (table.Rows.Count == 0)
         {
             return;
         }
@@ -107,12 +108,8 @@ public class HtmlRenderer(OutputContext outputContext)
             : string.Empty;
 
         Render($"<table>{headers}");
-        if (table.Title != null)
-        {
-            Render($"<caption>{HttpUtility.HtmlEncode(table.Title)}</caption>");
-        }
 
-        foreach (var row in table.TableData)
+        foreach (var row in table.Rows)
         {
             Render("<tr>");
             for (int i = 0; i < table.Columns.Count; i++)

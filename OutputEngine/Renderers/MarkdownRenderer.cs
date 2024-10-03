@@ -16,7 +16,7 @@ public class MarkdownRenderer(OutputContext outputContext)
     public override void RenderSection(Section section, int indentCount = 0)
     {
         RenderSectionTitle(section);
-        RenderGroup((Group)section, 1);
+        RenderGroup((BlockContainer)section, 1);
     }
 
     public override void RenderSectionTitle(Section section)
@@ -26,22 +26,22 @@ public class MarkdownRenderer(OutputContext outputContext)
         RenderLine();
     }
 
-    public override void RenderParagraph(Paragraph paragraph, int indentCount = 0)
+    public override void RenderTextContainer(TextContainer container, int indentCount = 0)
     {
-        if (paragraph.Count() == 0)
+        if (container.Count() == 0)
         {
             return;
         }
-        var parts = paragraph.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
+        var parts = container.Where(part => !string.IsNullOrEmpty(part.Text)).ToArray();
         var output = CreateParagraphText(parts);
         output = MarkdownEncode(output);
-        (string? open, string? close) = OutputStyles?.GetStyle(paragraph.Style) ?? (null, null);
+        (string open, string close) = OutputStyles.GetStyleCodes(container.Styles);
         RenderLine($"{(open is null ? "" : open)}{output}{(close is null ? "" : close)}");
     }
 
     public override void RenderTable(Table table, int indentCount = 0)
     {
-        if (table.TableData.Count == 0)
+        if (table.Rows.Count == 0)
         {
             return;
         }
@@ -53,7 +53,7 @@ public class MarkdownRenderer(OutputContext outputContext)
         var fence = "|" + string.Join('|', table.Columns.Select(col => "---")) + "|";
         Render(fence);
         Render(Environment.NewLine);
-        foreach (var row in table.TableData)
+        foreach (var row in table.Rows)
         {
             Render("|");
             for (int i = 0; i < table.Columns.Count; i++)

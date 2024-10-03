@@ -3,10 +3,9 @@
 
 namespace OutputEngine.Primitives;
 
-public enum TableColumnAlignment
+public class Header : TextContainer
 {
-    Left = 0,
-    Right,
-    Centered,
-    Justified
+    public Header(string text)
+        : base(Styles.CreateWithImplicit(BlockStyle.SectionHeading), text)
+    { }
 }

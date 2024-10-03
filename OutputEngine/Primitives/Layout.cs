@@ -3,15 +3,16 @@
 
 namespace OutputEngine.Primitives;
 
+// TODO: Probably replace this with root BlockContainer
 public abstract class Layout
 {
-    protected Layout(IEnumerable<Section> sections, Title? title = null)
+    protected Layout(IEnumerable<Section> sections, Header? title = null)
     {
         Sections = sections.ToList();
         Title = title;
     }
 
-    public Title? Title { get;  }
+    public Header? Title { get;  }
     public List<Section> Sections { get; private set; } = [];
 
 }

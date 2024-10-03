@@ -3,8 +3,8 @@
 
 namespace OutputEngine.Primitives;
 // TODO: "Inline" might be a good part of this name
-public class Link(string text, Uri uri, string? style = null, Whitespace whitespace = Whitespace.BeforeAndAfter)
-    : InlineElement(text, style, whitespace)
+public class Link(string text, Uri uri, SurroundingWhitespace whitespace = SurroundingWhitespace.BeforeAndAfter)
+    : InlineElement(text, Styles.CreateWithImplicit(InlineStyle.LinkText), whitespace)
 {
     public Uri Uri { get; set; } = uri;
 
