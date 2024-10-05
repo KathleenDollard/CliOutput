@@ -1,6 +1,5 @@
 ﻿// Only Help works, and only the build command. 
 // TODO: Switch this to use Powderhouse when we move back into the main repo
-// TODO: Make a more complete example
 
 using CliOutput;
 using CliOutput.Help;
@@ -50,6 +49,7 @@ var help = HelpLayout.Create(buildCommand);
 var outputContext = new OutputContext();
 var renderer = args.LastOrDefault() switch
 {
+    //  MarkdownRenderer(TextWriter writer, MarkdownRenderOptions options)
     "markdown" => (CliRenderer)new MarkdownRenderer(outputContext),
     "html" => new HtmlRenderer(outputContext),
     "richold" => new RichTerminalOld(outputContext),

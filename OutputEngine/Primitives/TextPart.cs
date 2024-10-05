@@ -2,15 +2,16 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace OutputEngine.Primitives;
-// TODO: "Inline" might be a good part of this name
+
 // TODO: Remove and use InLineElement (remove abstract)
 public class TextPart : InlineElement
 {
-    public TextPart(string text, string? style = null, SurroundingWhitespace whitespace = SurroundingWhitespace.BeforeAndAfter) : base(text, Styles.Empty, whitespace)
+    public TextPart(string text, string? style = null, SurroundingWhitespace whitespace = SurroundingWhitespace.BeforeAndAfter) 
+        : base(text, Styles.Empty, whitespace)
     {
         if (style is not null)
         {
-            Styles.Add(style);
+            AddStyle(style);
         }
     }
 

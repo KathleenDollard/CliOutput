@@ -13,6 +13,7 @@ namespace OutputEngine.Renderers;
 /// Implementing classes should set an appropriate default 
 /// OutputStyles if it is null.
 /// </remarks>
+// TODO: Plan is: Pass the writer to the renderer, and pass a test writer when testing. This is cleaner and only allowed because all output now goes through a renderer.
 public class CliWriter(OutputContext outputContext) : TextWriter
 {
     public override Encoding Encoding { get; } = outputContext.Encoding;
@@ -52,5 +53,4 @@ public class CliWriter(OutputContext outputContext) : TextWriter
             Console.Write(text);
         }
     }
-
 }

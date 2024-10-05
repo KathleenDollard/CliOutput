@@ -1,8 +1,6 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Transactions;
-
 namespace OutputEngine.Renderers;
 
 public abstract class OutputStyles
@@ -18,7 +16,6 @@ public abstract class OutputStyles
         AddStyle(InlineStyle.Optional, Optional);
         AddStyle(InlineStyle.Argument, Argument);
         AddStyle(InlineStyle.LinkText, LinkText);
-
 
         AddStyle(BlockStyle.SectionHeading, SectionHeading);
         AddStyle(BlockStyle.CodeBlock, CodeBlock);

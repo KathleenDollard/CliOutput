@@ -77,7 +77,7 @@ public class HtmlRenderer(OutputContext outputContext)
 
     private static (string tag, string style, string? parentTag) ParseTextContainerStyleToTags(TextContainer container) 
         =>
-        // TODO: mhutch - I could use some HTML expertise here for managing styles ,ignring all but the first style is obviously wrong
+        // TODO: We need HTML expertise here for managing styles ,ignoring all but the first style is obviously wrong
         container.Styles[0] switch
         {
             BlockStyle.Warning => ("p", "style=\"color:orange;\"", null),

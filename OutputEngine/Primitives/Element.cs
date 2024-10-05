@@ -3,18 +3,36 @@
 
 namespace OutputEngine.Primitives;
 
-// TODO: Constructor for implicit types from elements like Link or InlineCode
-public abstract class Element(Styles styles)
+/// <summary>
+/// The base type for all primitive elements.
+/// </summary>
+public abstract class Element
 {
-    public Styles Styles { get;  } = styles;
+    private Styles styles;
 
-    public void AddStyle(string style)
-    {
-        Styles.Add(style);
-    }
+    /// <summary>
+    /// Creates a new instance of <see cref="Element"/> with the specified <paramref name="initialStyles"/>.
+    /// </summary>
+    /// <param name="implicitStyles">A style prefilled with the implicit styles for the element class.</param>
+    public Element(Styles implicitStyles) 
+        => this.styles = implicitStyles;
 
-    public void ResetStyles()
-    {
-        Styles.Reset();
-    }
+    /// <summary>
+    /// Return the styles for this element.
+    /// </summary>
+    public Styles Styles 
+        => styles;
+
+    /// <summary>
+    /// Add a style to the element. 
+    /// </summary>
+    /// <param name="style">The name of the style to add.</param>
+    public void AddStyle(string style) 
+        => styles.Add(style);
+
+    /// <summary>
+    /// Reset the styles for the element to only the implicit styles for the class of element.
+    /// </summary>
+    public void ResetStyles() 
+        => styles.Reset();
 }

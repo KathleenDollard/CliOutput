@@ -58,7 +58,7 @@ public class SpectreRenderer(OutputContext outputContext)
         var output = CreateParagraphText(parts);
         var lines = output.Wrap(useWidth);
 
-        // TODO: mhutch: Another case of managing multiple styles gracefully. Taking first is wrong.
+        // TODO: We need a deeper look here here for managing styles ,ignoring all but the first style is obviously wrong
         var style = GetSpectreStyle(container.Styles[0]);
 
         foreach (var line in lines)

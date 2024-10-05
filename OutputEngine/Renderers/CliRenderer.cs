@@ -80,20 +80,26 @@ public abstract class CliRenderer
         }
     }
 
-
     private CliWriter Writer { get; }
     public string? GetBuffer()
         => Writer.Redirecting
                 ? Writer.GetBuffer()
                 : null;
+ 
     protected bool Redirecting => Writer.Redirecting;
+  
     protected int Width { get; }
+
     protected int IndentSize { get; }
+
     protected OutputStyles OutputStyles { get; }
+ 
     protected Dictionary<Type, Action<BlockElement, int>> BlockRenderers { get; }
+
     protected Dictionary<Type, Action<InlineElement>> InlineRenderers { get; }
 
     public abstract void RenderTextContainer(TextContainer container, int indentCount = 0);
+
     public abstract void RenderTable(Table table, int indentCount);
 
     /// <summary>
@@ -122,7 +128,6 @@ public abstract class CliRenderer
         RenderLine();
     }
 
-
     public void RenderLayout(Layout layout, int indentCount = 0)
     {
         foreach (var section in layout.Sections)
@@ -140,8 +145,10 @@ public abstract class CliRenderer
 
     public virtual void RenderSectionTitle(Section section)
     {
-        RenderTextContainer(section.Heading);
-        RenderLine();
+        if (section.Heading is not null)
+        {
+            RenderTextContainer(section.Heading);
+        }
     }
 
     public virtual void RenderGroup(BlockContainer group, int indentCount = 0)

@@ -33,7 +33,7 @@ public class RichTerminalOld(OutputContext outputContext)
 
         // TO-DO: Test different styles on different terminal backgrounds
         // to ensure colors work for different environments
-        // TODO: mhutch: Should first or last win (order of applying). Just taking first is obviously wrong
+        // TODO: We need additional work here for managing styles ,ignoring all but the first style is obviously wrong
         var style = container.Styles[0] switch
         {
             BlockStyle.Error => new Style(foreground: Color.Red, background: Color.Black, decoration: Decoration.Bold),

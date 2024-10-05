@@ -6,27 +6,41 @@ using System.Text;
 
 namespace OutputEngine.Primitives;
 
-// TODO: Create a common base class for things that hold TextPart
+/// <summary>
+/// The base class for things that hold <see cref="TextPart"/>s, that is things that contain text that can be individually formatted by the CLI author."/>
+/// </summary>
 public abstract class TextContainer : BlockElement, IEnumerable<TextPart>
 {
     private readonly List<TextPart> parts = [];
 
-    public TextContainer(Styles styles, params TextPart[] parts)
-        : base(styles)
+    /// <summary>
+    /// Creates a new text container with the given text parts.
+    /// </summary>
+    /// <param name="implicitStyles"><inheritdoc/>/></param>
+    /// <param name="parts">The individual <see cref="TextPart"/>s held in the <see cref="TextContainer"/></param>
+    protected TextContainer(Styles implicitStyles, params TextPart[] parts)
+        : base(implicitStyles)
     {
         this.parts.AddRange(parts);
     }
 
-    public TextContainer(Styles styles, params string[] parts)
-        : this(styles, parts.Select(s => new TextPart(s)).ToArray())
+    /// <summary>
+    /// Creates a new text container with the given text.
+    /// </summary>
+    /// <param name="implicitStyles"><inheritdoc/>/></param>
+    /// <param name="text">The text to hold.</param>
+    protected TextContainer(Styles implicitStyles, string text)
+        : this(implicitStyles, new TextPart(text))
     { }
 
-    public TextContainer(Styles styles)
-        : this(styles, Array.Empty<TextPart>())
-    { }
-
+    /// <summary>
+    /// A new line does not appear after this container when this is true. Not all renderers respect this value.
+    /// </summary>
+    // TODO: Move this to paragraph. Can we do without this because it does not make sense in HTML - at least change name to NoPaddingBelow. This would be better to handle via a style.
     public bool NoNewLineAfter { get; set; }
 
+    // TODO: Make these 2 into helper methods, possibly part of the wrapping code.
+    // TODO: Document the rest of this file.
     public int PlainWidth(int trialWidth)
     {
         IEnumerable<string> strings = PlainOutput(trialWidth);
@@ -57,7 +71,7 @@ public abstract class TextContainer : BlockElement, IEnumerable<TextPart>
     public void Add(TextPart part)
         => this.parts.Add(part);
 
-    public void AddRange(IEnumerable<TextPart> parts)
+    public void Add(IEnumerable<TextPart> parts)
         => this.parts.AddRange(parts);
 
     public TextPart this[int index]

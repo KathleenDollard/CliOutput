@@ -6,6 +6,9 @@
 using System.Diagnostics;
 using StyleTuple = (string? One, System.Collections.Generic.List<string>? Many);
 
+// TODO: Consider making this and element immutable or additive only and at that point remove implicit styles here, and combine somewhere with user styles
+// TODO: Consider making style available on all elements
+
 namespace OutputEngine;
 
 /// <summary>
@@ -41,16 +44,16 @@ public struct Styles
         return newStyles;
     }
 
-    public Styles(string item)
+    public Styles(string style)
     {
-        styles = (item, null);
+        styles = (style, null);
     }
 
-    public Styles(params string[] items)
+    public Styles(params string[] styles)
     {
-        ArgumentNullException.ThrowIfNull(items);
+        ArgumentNullException.ThrowIfNull(styles);
 
-        styles = AddRangeAndReturnTuple(items);
+        this.styles = AddRangeAndReturnTuple(styles);
     }
 
     private readonly bool HasOneItem
@@ -79,16 +82,10 @@ public struct Styles
                     ? 0
                     : styles.Many.Count;
 
-    internal Styles Add(string item)
-    {
-        StyleTuple value = Contains(item)
+    internal void Add(string item)
+        => this.styles = Contains(item)
                         ? styles
                         : AddAndReturnTuple(item);
-        return value;
-    }
-
-    internal Styles Reset()
-        => CreateWithImplicit(implicitStyles);
 
     internal void AddRange(IEnumerable<string> items)
         => styles = NewOnly(items) switch
@@ -129,7 +126,14 @@ public struct Styles
             ? item == styles.One
             : styles.Many is not null && styles.Many.Contains(item);
 
-    private readonly string?[] ToArray()
+    internal void Reset()
+    {
+        styles = (null, null);
+        styles = AddRangeAndReturnTuple(implicitStyles);
+    }
+
+    // TODO: Make this private or internal, tests can use enumerator/a method with foreach
+    public readonly string?[] ToArray()
         => HasOneItem
             ? [styles.One]
             : styles.Many is null

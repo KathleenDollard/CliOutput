@@ -3,9 +3,8 @@
 
 namespace OutputEngine.Primitives;
 
-// TODO: Determine if using byte decreases the size of the struct
 [Flags]
-public enum SurroundingWhitespace : byte
+public enum SurroundingWhitespace
 {
     NeitherBeforeOrAfter = 0,
     Before = 0b0001,

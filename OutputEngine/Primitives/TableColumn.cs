@@ -10,8 +10,7 @@ namespace OutputEngine.Primitives;
 /// Initializes a new instance of the <see cref="TableColumn"/> class.
 /// </remarks>
 /// <param name="header">The <see cref="string"/> instance to use as the table column header.</param>
-// TODO: Change header to paragraph's base type
-// TODO: mhutch: Should a column header be paragraph or header, or it's own style? Probably not Header as that would bring likely unwanted sytling
+// TODO: Change header to new type with TextContainer base class
 public sealed class TableColumn(Paragraph header,
                                 TableColumnKind columnKind = TableColumnKind.Default,
                                 Alignment alignment = Alignment.Left,

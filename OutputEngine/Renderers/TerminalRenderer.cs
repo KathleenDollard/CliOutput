@@ -43,12 +43,10 @@ public class TerminalRenderer(OutputContext outputContext, OutputStyles? default
 
     public override void RenderTable(Table table, int indentCount = 0)
     {
-        // TODO: Add IncludeHeaders to the Table class
-        var includeHeaders = false;
         var useWidth = Width - (indentCount * IndentSize);
         var indent = new string(' ', indentCount * IndentSize);
         var fixedWidthTable = new FixedWidthTable(table);
-        var layout = fixedWidthTable.LayoutTable(useWidth, includeHeaders);
+        var layout = fixedWidthTable.LayoutTable(useWidth, table.IncludeHeaders);
         if (layout is null)
         {
             return;

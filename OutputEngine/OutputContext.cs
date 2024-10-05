@@ -13,7 +13,7 @@ public class OutputContext(bool shouldRedirect = false,
 {
     public bool ShouldRedirect { get; set; } = shouldRedirect;
 
-
+    // TODO: Much of this renderer specific
     public OutputStyles? OutputStyles { get; set; } = null;
     public Encoding Encoding { get; set; } = Encoding.UTF8;
     public int IndentSize { get; set; } = indentSize;
