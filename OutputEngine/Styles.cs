@@ -89,10 +89,11 @@ public struct Styles
     /// This is used for testing to ensure Lists are not incorrectly created.
     /// </summary>
     /// <returns></returns>
+    // TODO: Figure out why Internals Visible To is not working for this project from CliOutput.Tests
     internal StyleTuple GetTupleForTesting() 
         => this.styles;
 
-    internal void Reset() 
+    internal void Clear() 
         => styles = (null, null);
 
     private readonly bool HasOneItem

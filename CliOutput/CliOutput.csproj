@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="ErrorReporting\" />
-  </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="CliOutput.Test" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\OutputEngine\OutputEngine.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\OutputEngine\OutputEngine.csproj" />
+	</ItemGroup>
 
 </Project>

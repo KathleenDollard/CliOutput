@@ -8,6 +8,8 @@ namespace OutputEngine.Primitives;
 /// </summary>
 public abstract class Element
 {
+    internal static void Test() { }
+
     private Styles styles;
 
     /// <summary>
@@ -24,8 +26,8 @@ public abstract class Element
         => styles.Add(style);
 
     /// <summary>
-    /// Reset the styles for the element to only the implicit styles for the class of element.
+    /// Clears all styles for the element.
     /// </summary>
-    public void ResetStyles() 
-        => styles.Reset();
+    public void ClearStyles() 
+        => styles.Clear();
 }

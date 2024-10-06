@@ -34,15 +34,9 @@ public class StylesOneOrManyTests
         paragraph.AddStyle("style1");
         paragraph.AddStyle("style2");
 
-        paragraph.Styles.ToArray().Should().BeEquivalentTo(["style1", "style2"]);
-    }
-
-    [Fact]
-    public void Can_create_primitive_with_implicit_style()
-    {
-        var codeInline = new CodeInline("Hello World");
-
-        codeInline.Styles.ToArray().Should().BeEquivalentTo(["CodeInline"]);
+        var (one, many) = paragraph.Styles.GetTupleForTesting();
+        one.Should().BeNull();
+        many.Should().BeEquivalentTo(["style1", "style2"]);
     }
 
     [Fact]
@@ -50,7 +44,7 @@ public class StylesOneOrManyTests
     {
         var textPart = new TextPart("Hello World", "style1");
 
-        textPart.Styles.ToArray().Should().BeEquivalentTo(["style1"]);
+        textPart.Styles.GetTupleForTesting().Should().Be(("style1", null));
     }
 
     [Fact]
@@ -59,7 +53,9 @@ public class StylesOneOrManyTests
         var textPart = new TextPart("Hello World", "style1");
         textPart.AddStyle("style2");
 
-        textPart.Styles.ToArray().Should().BeEquivalentTo(["style1", "style2"]);
+        var (one, many) = textPart.Styles.GetTupleForTesting();
+        one.Should().BeNull();
+        many.Should().BeEquivalentTo(["style1", "style2"]);
     }
 
     [Fact]
@@ -68,7 +64,7 @@ public class StylesOneOrManyTests
         var textPart = new TextPart("Hello World", "style1");
         textPart.AddStyle("style1");
 
-        textPart.Styles.ToArray().Should().BeEquivalentTo(["style1"]);
+        textPart.Styles.GetTupleForTesting().Should().Be(("style1", null));
     }
 
 
@@ -79,18 +75,9 @@ public class StylesOneOrManyTests
         textPart.AddStyle("style2");
         textPart.AddStyle("style2");
 
-        textPart.Styles.ToArray().Should().BeEquivalentTo(["style1", "style2"]);
-    }
-
-    [Fact]
-    public void Can_reset_styles_to_implicit()
-    {
-        var codeInline = new CodeInline("Hello World");
-        codeInline.AddStyle("style2");
-        codeInline.Styles.ToArray().Should().BeEquivalentTo(["CodeInline", "style2"]);
-
-        codeInline.ResetStyles();
-        codeInline.Styles.ToArray().Should().BeEquivalentTo(["CodeInline"]);
+        var (one, many) = textPart.Styles.GetTupleForTesting();
+        one.Should().BeNull();
+        many.Should().BeEquivalentTo(["style1", "style2"]);
     }
 
     [Fact]
@@ -98,9 +85,13 @@ public class StylesOneOrManyTests
     {
         var textPart = new TextPart("Hello World", "style1");
         textPart.AddStyle("style2");
-        textPart.Styles.ToArray().Should().BeEquivalentTo(["style1", "style2"]);
+        var (one, many) = textPart.Styles.GetTupleForTesting();
+        one.Should().BeNull();
+        many.Should().BeEquivalentTo(["style1", "style2"]);
 
-        textPart.ResetStyles();
-        textPart.Styles.ToArray().Should().BeEmpty();
+        textPart.ClearStyles();
+        var (actualOne, actualMany) = textPart.Styles.GetTupleForTesting();
+        actualOne.Should().BeNull();
+        actualMany.Should().BeNull();
     }
 }

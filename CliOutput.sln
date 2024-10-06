@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpectreCliOutput", "Spectre
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpectreCliOutput.Tests", "SpectreCliOutput.Tests\SpectreCliOutput.Tests.csproj", "{4966AE6C-34E7-4F68-882C-EEED67FFDC2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutputEngine.Test", "OutputEngine.Test\OutputEngine.Test.csproj", "{A6777597-5D02-4AF0-B22B-42D04608B8EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{4966AE6C-34E7-4F68-882C-EEED67FFDC2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4966AE6C-34E7-4F68-882C-EEED67FFDC2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4966AE6C-34E7-4F68-882C-EEED67FFDC2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6777597-5D02-4AF0-B22B-42D04608B8EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6777597-5D02-4AF0-B22B-42D04608B8EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6777597-5D02-4AF0-B22B-42D04608B8EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6777597-5D02-4AF0-B22B-42D04608B8EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
