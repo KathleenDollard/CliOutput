@@ -2,7 +2,7 @@
 
 public class CodeBlock : BlockElement
 {
-    public CodeBlock() : base(Styles.CreateWithImplicit(BlockStyle.CodeBlock))
+    public CodeBlock() : base()
     { }
     public string? Code { get; }
     public string? Language { get; }

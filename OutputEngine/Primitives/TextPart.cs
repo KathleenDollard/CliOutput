@@ -7,7 +7,7 @@ namespace OutputEngine.Primitives;
 public class TextPart : InlineElement
 {
     public TextPart(string text, string? style = null, SurroundingWhitespace whitespace = SurroundingWhitespace.BeforeAndAfter) 
-        : base(text, Styles.Empty, whitespace)
+        : base(text,  whitespace)
     {
         if (style is not null)
         {

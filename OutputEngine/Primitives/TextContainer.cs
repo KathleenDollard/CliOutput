@@ -18,8 +18,8 @@ public abstract class TextContainer : BlockElement, IEnumerable<TextPart>
     /// </summary>
     /// <param name="implicitStyles"><inheritdoc/>/></param>
     /// <param name="parts">The individual <see cref="TextPart"/>s held in the <see cref="TextContainer"/></param>
-    protected TextContainer(Styles implicitStyles, params TextPart[] parts)
-        : base(implicitStyles)
+    protected TextContainer(params TextPart[] parts)
+        : base()
     {
         this.parts.AddRange(parts);
     }
@@ -29,8 +29,8 @@ public abstract class TextContainer : BlockElement, IEnumerable<TextPart>
     /// </summary>
     /// <param name="implicitStyles"><inheritdoc/>/></param>
     /// <param name="text">The text to hold.</param>
-    protected TextContainer(Styles implicitStyles, string text)
-        : this(implicitStyles, new TextPart(text))
+    protected TextContainer(string text)
+        : this(new TextPart(text))
     { }
 
     /// <summary>

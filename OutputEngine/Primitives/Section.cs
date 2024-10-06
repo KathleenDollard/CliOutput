@@ -6,7 +6,7 @@ namespace OutputEngine.Primitives;
 public class Section : BlockContainer
 {
     public Section(string? heading, params BlockElement[] elements)
-        : base(Styles.CreateWithImplicit(BlockStyle.Section))
+        : base()
     {
         if (heading != null)
         {

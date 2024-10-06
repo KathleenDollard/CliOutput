@@ -22,43 +22,23 @@ namespace OutputEngine;
 public struct Styles
 {
     public static readonly Styles Empty = new();
-    private string[]? implicitStyles;
     private StyleTuple styles;
 
     /// <summary>
-    /// Holds implicit styles so that they can be reset. Alternatively, implicit styles could be held
-    /// in <see cref="Element"/>, a ResetStyles method placed on Element and the Reset method removed here.
+    /// Creates a new instance of <see cref="Styles"/> with the specified <paramref name="styles"/>.
     /// </summary>
-    /// <param name="implicitStyles"></param>
-    /// <returns></returns>
-    internal static Styles CreateWithImplicit(params string[] implicitStyles)
-    {
-        var newStyles = new Styles
-        {
-            implicitStyles = implicitStyles
-        };
-        if (implicitStyles.Length > 0)
-        {
-            newStyles.AddRange(implicitStyles);
-        }
-        return newStyles;
-    }
+    /// <param name="styles"></param>
+    public Styles(params string[] styles) 
+        => this.styles = styles.Length == 0 
+                ? ((string? One, List<string>? Many))(null, null) 
+                : AddRangeAndReturnTuple(styles);
 
-    public Styles(string style)
-    {
-        styles = (style, null);
-    }
-
-    public Styles(params string[] styles)
-    {
-        ArgumentNullException.ThrowIfNull(styles);
-
-        this.styles = AddRangeAndReturnTuple(styles);
-    }
-
-    private readonly bool HasOneItem
-        => styles.One is not null;
-
+    /// <summary>
+    /// Gets the style at the specified <paramref name="index"/>. Generally used for calling code that prefers `for` to `foreach`.
+    /// </summary>
+    /// <param name="index">The position of the style to return.</param>
+    /// <returns>The style at the specific index.</returns>
+    /// <exception cref="IndexOutOfRangeException">Thrown if the index is less than zero or greater than or equal to the length of the Styles.</exception>
     public readonly string? this[int index]
     {
         get
@@ -75,6 +55,9 @@ public struct Styles
         }
     }
 
+    /// <summary>
+    /// Gets the number of styles in the collection.
+    /// </summary>
     public readonly int Count
         => HasOneItem
                 ? 1
@@ -82,18 +65,38 @@ public struct Styles
                     ? 0
                     : styles.Many.Count;
 
+    /// <remarks>
+    /// Used only by <see cref="Element"/>. This overload can be removed when the Add overload that takes IEnumerable is made into a params array
+    /// </remarks>
     internal void Add(string item)
         => this.styles = Contains(item)
                         ? styles
                         : AddAndReturnTuple(item);
 
-    internal void AddRange(IEnumerable<string> items)
+    /// <remarks>
+    /// TOO: mhutch: Is there a way around the following issue? If we allow floating Styles, it is inconvenient that users can't add to them. I do not care a lot about this as I think it can be solved later.
+    /// Used only by <see cref="Element"/>. Do not make public, as users are likely to stub their toes that the struct results in a copy returned from Element.Property.
+    /// </remarks>
+    internal void Add(IEnumerable<string> items)
         => styles = NewOnly(items) switch
         {
             null or [] => styles,
             [var item] => AddAndReturnTuple(item),
             var many => AddRangeAndReturnTuple(many)
         };
+
+    /// <summary>
+    /// This is used for testing to ensure Lists are not incorrectly created.
+    /// </summary>
+    /// <returns></returns>
+    internal StyleTuple GetTupleForTesting() 
+        => this.styles;
+
+    internal void Reset() 
+        => styles = (null, null);
+
+    private readonly bool HasOneItem
+        => styles.One is not null;
 
     private readonly StyleTuple AddAndReturnTuple(string? item)
         => styles switch
@@ -121,24 +124,10 @@ public struct Styles
         return items.Where(item => !me.Contains(item)).ToList();
     }
 
-    public readonly bool Contains(string item)
+    private readonly bool Contains(string item)
         => HasOneItem
             ? item == styles.One
             : styles.Many is not null && styles.Many.Contains(item);
-
-    internal void Reset()
-    {
-        styles = (null, null);
-        styles = AddRangeAndReturnTuple(implicitStyles);
-    }
-
-    // TODO: Make this private or internal, tests can use enumerator/a method with foreach
-    public readonly string?[] ToArray()
-        => HasOneItem
-            ? [styles.One]
-            : styles.Many is null
-                ? Array.Empty<string?>()
-                : styles.Many.ToArray();
 
     public readonly Enumerator GetEnumerator()
         => new(this);
@@ -157,6 +146,13 @@ public struct Styles
         public readonly string? Current
             => _collection[_index];
     }
+
+    private readonly string?[] ToArray()
+      => HasOneItem
+          ? [styles.One]
+          : styles.Many is null
+              ? Array.Empty<string?>()
+              : styles.Many.ToArray();
 
     private sealed class DebuggerProxy(Styles instance)
     {

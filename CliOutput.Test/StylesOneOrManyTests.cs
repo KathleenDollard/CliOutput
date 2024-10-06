@@ -23,7 +23,7 @@ public class StylesOneOrManyTests
 
         paragraph.AddStyle("style1");
 
-        paragraph.Styles.ToArray().Should().BeEquivalentTo(["style1"]);
+        paragraph.Styles.GetTupleForTesting().Should().Be(("style1", null));
     }
 
     [Fact]

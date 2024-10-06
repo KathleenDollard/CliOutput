@@ -7,12 +7,8 @@ namespace OutputEngine.Primitives;
 
 public class BlockContainer : BlockElement, IEnumerable<BlockElement>
 {
-    protected BlockContainer(Styles styles) 
-        : base(styles)
-    { }
-
     public BlockContainer()
-        : base(Styles.Empty)
+        : base()
     { }
 
     public List<BlockElement> Children { get; } = new();

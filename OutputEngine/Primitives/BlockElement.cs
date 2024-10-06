@@ -4,8 +4,8 @@
 namespace OutputEngine.Primitives;
 
 public abstract class BlockElement : Element {
-    protected BlockElement(Styles style)
-        : base(style)
+    protected BlockElement()
+        : base()
     {
         
     }

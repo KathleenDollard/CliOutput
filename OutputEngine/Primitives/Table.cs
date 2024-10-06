@@ -7,7 +7,7 @@ namespace OutputEngine.Primitives;
 /// A table that can be rendered.
 /// </summary>
 public sealed class Table(IReadOnlyList<TableColumn> columns) 
-    : BlockElement(Styles.CreateWithImplicit(BlockStyle.Table))
+    : BlockElement()
 {
     public IEnumerable<Paragraph?> GetHeaderRow()
     {

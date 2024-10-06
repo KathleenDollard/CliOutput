@@ -6,6 +6,6 @@ namespace OutputEngine.Primitives;
 public class Header : TextContainer
 {
     public Header(string text)
-        : base(Styles.CreateWithImplicit(BlockStyle.SectionHeading), text)
+        : base(text)
     { }
 }

@@ -22,11 +22,11 @@ public class HelpUsage : HelpSection
 
         static void AddHelpUsageLine(CliCommand command, Paragraph paragraph)
         {
-            paragraph.AddRange(command.Ancestors.Reverse().Select(x => new TextPart(x.Name, InlineStyle.SlightlyImportant)));
+            paragraph.Add(command.Ancestors.Reverse().Select(x => new TextPart(x.Name, InlineStyle.SlightlyImportant)));
             paragraph.Add(new TextPart(command.Name));
             if (command.Arguments.Any())
             {
-                paragraph.AddRange(command.Arguments.Select(arg => UsageFromArg(arg)));
+                paragraph.Add(command.Arguments.Select(arg => UsageFromArg(arg)));
             }
             if (command.SubCommands.Any())
             {

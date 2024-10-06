@@ -15,7 +15,7 @@ public class Paragraph : TextContainer
     /// </summary>
     /// <param name="parts">A set of <see cref="TextPart"> instances, each of which may have a different style.</param>
     public Paragraph(params TextPart[] parts)
-        : base(Styles.Empty, parts)
+        : base( parts)
     { }
 
     /// <summary>
@@ -23,7 +23,7 @@ public class Paragraph : TextContainer
     /// </summary>
     /// <param name="text">The text that comprises the paragraph.</param>
     public Paragraph(string text)
-        : base(Styles.Empty, text)
+        : base(text)
     { }
 
     /// <summary>
@@ -33,7 +33,7 @@ public class Paragraph : TextContainer
     /// This resolves an ambiguity.
     /// </remarks>
     public Paragraph()
-        : base(Styles.Empty, Array.Empty<TextPart>())
+        : this(Array.Empty<TextPart>())
     { }
 }
 

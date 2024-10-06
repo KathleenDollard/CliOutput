@@ -4,7 +4,7 @@
 namespace OutputEngine.Primitives;
 
 public class CodeInline(string text)
-    : InlineElement(text, Styles.CreateWithImplicit(InlineStyle.CodeInline), SurroundingWhitespace.BeforeAndAfter)
+    : InlineElement(text, SurroundingWhitespace.BeforeAndAfter)
 {
     public string? Language { get; set; }
 }

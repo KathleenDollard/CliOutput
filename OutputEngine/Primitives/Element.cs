@@ -11,13 +11,6 @@ public abstract class Element
     private Styles styles;
 
     /// <summary>
-    /// Creates a new instance of <see cref="Element"/> with the specified <paramref name="initialStyles"/>.
-    /// </summary>
-    /// <param name="implicitStyles">A style prefilled with the implicit styles for the element class.</param>
-    public Element(Styles implicitStyles) 
-        => this.styles = implicitStyles;
-
-    /// <summary>
     /// Return the styles for this element.
     /// </summary>
     public Styles Styles 

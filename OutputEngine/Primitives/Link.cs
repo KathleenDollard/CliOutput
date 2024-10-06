@@ -10,7 +10,7 @@ namespace OutputEngine.Primitives;
 /// <param name="uri">The target of the link.</param>
 /// <param name="whitespace"><inheritdoc/>/></param>
 public class Link(string text, Uri uri, SurroundingWhitespace whitespace = SurroundingWhitespace.BeforeAndAfter)
-    : InlineElement(text, Styles.CreateWithImplicit(InlineStyle.LinkText), whitespace)
+    : InlineElement(text, whitespace)
 {
     /// <summary>
     /// The target of the link.
