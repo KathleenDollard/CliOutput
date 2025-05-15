@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using OutputEngine.Primitives;
+using System;
 using System.Text;
 
 namespace OutputEngine.Renderers;
@@ -11,7 +12,7 @@ public abstract class CliRenderer
     protected static class Advanced
     {
         public static TWriter? WriterFromRenderer<TWriter>(CliRenderer renderer)
-            where TWriter : CliWriter
+            where TWriter : WriterForTests
             => renderer.Writer as TWriter;
     }
 
@@ -23,13 +24,13 @@ public abstract class CliRenderer
     /// Implementing classes should set an appropriate default 
     /// OutputStyles if it is null.
     /// </remarks>
-    protected CliRenderer(OutputContext outputContext, OutputStyles defaultOutputStyles, CliWriter? defaultWriter = null)
+    protected CliRenderer(OutputContext outputContext, OutputStyles defaultOutputStyles, WriterForTests? defaultWriter = null)
     {
         Writer = outputContext.Writer is not null
             ? outputContext.Writer
             : defaultWriter is not null
                 ? defaultWriter
-                : new CliWriter(outputContext);
+                : new WriterForTests(outputContext);
         Width = outputContext.Width;
         IndentSize = outputContext.IndentSize;
         OutputStyles = outputContext.OutputStyles ?? defaultOutputStyles;
@@ -80,12 +81,8 @@ public abstract class CliRenderer
         }
     }
 
-    private CliWriter Writer { get; }
-    public string? GetBuffer()
-        => Writer.Redirecting
-                ? Writer.GetBuffer()
-                : null;
- 
+    private TextWriter Writer { get; }
+
     protected bool Redirecting => Writer.Redirecting;
   
     protected int Width { get; }
@@ -111,14 +108,21 @@ public abstract class CliRenderer
     /// </remarks>
     public virtual void RenderLine()
     {
-        Writer.WriteLine();
+        Render(Environment.NewLine);
     }
 
-    public virtual void Render(string? text)
+    public void Render(string? text)
     {
         if (text is not null)
         {
-            Writer.Write(text);
+            if (Writer is not null)
+            {
+                Writer.Append(text);
+            }
+            else
+            {
+                Console.Write(text);
+            }
         }
     }
 

@@ -9,20 +9,19 @@ namespace OutputEngine.Renderers
         /// Create a new instance of <see cref="RendererSettings"/>
         /// </summary>
         /// <param name="shouldRedirect">Whether output should be redirected to something other than StdOut and StdError for testing, or possibly some other uses.</param>
-        /// <param name="writer">The TextWriter to use.</param>
+        /// <param name="redirectingWriter">The TextWriter to use.</param>
         /// <remarks>
         /// We need both ShouldRedirect and Writer because Spectre needs the Boolean and a writer
         /// and direct the other renderers need a Writer. Other renderers may be interested in whether
         /// output is redirected, so settings are expected to set both, although in the case of Spectre
         /// testing (Should redirect == true), the writer will be null.
         /// </remarks>
-        public RendererSettings(bool shouldRedirect, CliWriter writer)
+        public RendererSettings(TextWriter redirectingWriter)
         {
-            ShouldRedirect = shouldRedirect;
-            Writer = writer;
+            RedirectingWriter = redirectingWriter;
         }
 
-        public bool ShouldRedirect { get; set; }
-        public CliWriter? Writer { get; }
+        public bool Redirecting => RedirectingWriter is not null;
+        public TextWriter? RedirectingWriter { get; }
     }
 }

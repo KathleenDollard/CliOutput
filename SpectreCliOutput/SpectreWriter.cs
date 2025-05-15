@@ -11,7 +11,7 @@ using Spectre.Console.Testing;
 
 namespace SpectreCliOutput;
 
-public class SpectreWriter : CliWriter
+public class SpectreWriter : WriterForTests
 {
     private readonly IAnsiConsole Console;
     public SpectreWriter(OutputContext outputContext) : base(outputContext)

@@ -9,7 +9,7 @@ namespace OutputEngine;
 public class OutputContext(bool shouldRedirect = false,
                      int width = 80,
                      int indentSize = 2,
-                     CliWriter? writer = null)
+                     WriterForTests? writer = null)
 {
     public bool ShouldRedirect { get; set; } = shouldRedirect;
 

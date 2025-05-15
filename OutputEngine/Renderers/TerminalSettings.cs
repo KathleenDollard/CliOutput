@@ -5,11 +5,19 @@ using System.Text;
 
 namespace OutputEngine.Renderers;
 
-public class TerminalSettings(bool shouldRedirect, CliWriter writer) 
-    : RendererSettings(shouldRedirect, writer)
+public class TerminalSettings : RendererSettings
 {
-    public OutputStyles? OutputStyles { get; set; } = null;
-    public Encoding Encoding { get; set; } = Encoding.UTF8;
-    public int IndentSize { get; set; } = indentSize;
-    public int Width { get; set; } = width;
+    public TerminalSettings(OutputStyles? outputStyles, WriterForTests redirectingWriter, int indentSize, int width, Encoding encoding)
+        : base(redirectingWriter)
+    {
+        IndentSize = indentSize;
+        Width = width;
+        OutputStyles = outputStyles;
+        Encoding = encoding;
+    }
+
+    public OutputStyles? OutputStyles { get; }
+    public Encoding Encoding { get; }
+    public int IndentSize { get;  }
+    public int Width { get;  }
 }

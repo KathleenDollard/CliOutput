@@ -5,7 +5,7 @@ using OutputEngine.Primitives;
 
 namespace OutputEngine.Renderers;
 
-public class TerminalRenderer(OutputContext outputContext, OutputStyles? defaultOutputStyles = null, CliWriter? defaultWriter = null) 
+public class TerminalRenderer(OutputContext outputContext, OutputStyles? defaultOutputStyles = null, WriterForTests? defaultWriter = null) 
     : CliRenderer(outputContext, defaultOutputStyles ?? new TerminalStyles(), defaultWriter)
 {
     public override void RenderTextContainer(TextContainer paragraph, int indentCount = 0)

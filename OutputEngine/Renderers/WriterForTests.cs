@@ -5,6 +5,9 @@ using System.Text;
 
 namespace OutputEngine.Renderers;
 
+public class WriterForTests() : StringWriter
+{ }
+
 /// <summary>
 /// Base constructor for writers
 /// </summary>
@@ -20,7 +23,8 @@ public class CliWriter(OutputContext outputContext) : TextWriter
     public bool Redirecting { get; } = outputContext.ShouldRedirect;
 
     private readonly StringBuilder buffer = new();
-    public virtual string? GetBuffer() 
+
+    public virtual string? GetBuffer()
         => Redirecting
             ? buffer.ToString()
             : null;
@@ -32,11 +36,9 @@ public class CliWriter(OutputContext outputContext) : TextWriter
         {
             Write(output);
         }
-        // This needs to call the parameterless form because
-        // a line break is not be Environment.NewLine in HTML
-        // or markdown
         WriteLine();
     }
+
     public override void WriteLine()
     {
         Write(Environment.NewLine);
@@ -47,10 +49,6 @@ public class CliWriter(OutputContext outputContext) : TextWriter
         if (Redirecting)
         {
             buffer.Append(text);
-        }
-        else
-        {
-            Console.Write(text);
         }
     }
 }

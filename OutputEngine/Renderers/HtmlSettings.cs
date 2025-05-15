@@ -3,7 +3,7 @@
 
 namespace OutputEngine.Renderers;
 
-public class HemlSettings (bool shouldRedirect) 
+public class HtmlSettings (TextWriter textWriter, bool shouldRedirect) 
     : RendererSettings(shouldRedirect)
 {
 }
